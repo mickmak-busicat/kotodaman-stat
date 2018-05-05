@@ -300,6 +300,20 @@ Vue.directive('scroll', {
   }
 })
 
+function twitterShare(text){
+  gtag('event', 'Share', {
+    'event_category': 'Twitter share clicked',
+  });
+  window.open("https://twitter.com/intent/tweet?link="+window.location.href+"&original_referer="+window.location.href+"&text="+encodeURIComponent(text), "share", "width=640,height=443");
+}
+
+function facebookShare(){
+  gtag('event', 'Share', {
+    'event_category': 'Facebook share clicked',
+  });
+  window.open("http://www.facebook.com/sharer/sharer.php?u="+window.location.href, "share", "width=640,height=443");
+}
+
 $( document ).ready(function() {
   var app = new Vue(AppConfig);
 

@@ -59,7 +59,9 @@ const AppConfig = {
       this.countResultByGroupAndLength.all = [0, 0, 0, 0, 0, 0, 0, 0];
     },
     applyFilterClick: function(){
-      ga('send', 'event', 'Filter', 'ApplyFilterClicked');
+      gtag('event', 'Filter', {
+        'event_category': 'ApplyFilterClicked',
+      });
       $(this.$refs.wordPanel).accordion('close', 0);
       this.showCountByWords();
     },
@@ -137,7 +139,10 @@ const AppConfig = {
     changeSearchMethod: function(key) {
       this.searchMethod = key;
 
-      ga('send', 'event', 'Filter', 'SearchMethodChanged', key);
+      gtag('event', 'Filter', {
+        'event_category': 'SearchMethodChanged',
+        'key': key,
+      });
 
       // Instant update?
       this.showCountByWords();
@@ -198,17 +203,25 @@ const AppConfig = {
         this.showCountByWords();
       }
 
-      ga('send', 'event', 'Filter', 'WordPicked', group);
+      gtag('event', 'Filter', {
+        'event_category': 'WordPicked',
+        'group': group,
+      });
     },
     throwAwayGroupAtIndex: function(index) {
-      ga('send', 'event', 'Filter', 'WordUnpicked', this.pickedGroups[index]);
+      gtag('event', 'Filter', {
+        'event_category': 'WordUnpicked',
+        'group': this.pickedGroups[index],
+      });
       this.pickedGroups.splice(index, 1);
     },
     resetFilter: function() {
       this.pickedGroups = [];
       this.showCountByWords();
 
-      ga('send', 'event', 'Filter', 'FilterReset');
+      gtag('event', 'Filter', {
+        'event_category': 'FilterReset',
+      });
     },
     getInputWidth: function() {
       return 64 * (this.pickedGroups.length + 1);
@@ -236,7 +249,11 @@ const AppConfig = {
       this.showGroup = group;
       this.showLength = length;
 
-      ga('send', 'event', 'Result', 'WordsModalOpened', group, length);
+      gtag('event', 'Result', {
+        'event_category': 'WordsModalOpened',
+        'group': group,
+        'length': length,
+      });
     },
 
     getMatchType: function(key) {
@@ -265,7 +282,9 @@ const AppConfig = {
 
       $(this.$refs.wordPanel).accordion('open', 0);
 
-      ga('send', 'event', 'Page', 'ScrollToTopClicked');
+      gtag('event', 'Page', {
+        'event_category': 'ScrollToTopClicked',
+      });
     }
   }
 };
@@ -280,6 +299,20 @@ Vue.directive('scroll', {
     window.addEventListener('scroll', f)
   }
 })
+
+function twitterShare(text){
+  gtag('event', 'Share', {
+    'event_category': 'Twitter share clicked',
+  });
+  window.open("https://twitter.com/intent/tweet?link="+window.location.href+"&original_referer="+window.location.href+"&text="+encodeURIComponent(text), "share", "width=640,height=443");
+}
+
+function facebookShare(){
+  gtag('event', 'Share', {
+    'event_category': 'Facebook share clicked',
+  });
+  window.open("http://www.facebook.com/sharer/sharer.php?u="+window.location.href, "share", "width=640,height=443");
+}
 
 $( document ).ready(function() {
   var app = new Vue(AppConfig);
