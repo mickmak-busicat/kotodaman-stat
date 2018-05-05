@@ -61,6 +61,7 @@ const AppConfig = {
     applyFilterClick: function(){
       ga('send', 'event', 'Filter', 'ApplyFilterClicked');
       $(this.$refs.wordPanel).accordion('close', 0);
+      this.showCountByWords();
     },
     isSkipWord: function (word){
       if (this.pickedGroups.length === 0){
