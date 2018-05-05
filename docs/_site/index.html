@@ -1,11 +1,20 @@
----
-title: Kotodaman Word Stats
-description: Find out the best combination.
-permalink: /
-layout: layout
----
+<!DOCTYPE html>
+<html lang="en">
 
-    <div id="app">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+
+  <title>kotodaman word statistics</title>
+
+  <link rel="stylesheet" href="./css/main.css">
+  <link rel="stylesheet" href="./css/modal.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/semantic.min.css">
+</head>
+
+  <body>
+
+        <div id="app">
       <div id="back-top">
         <button @click="scrollToTop" class="circular ui icon button massive green">
           <i class="arrow alternate circle up outline icon"></i>
@@ -88,3 +97,57 @@ layout: layout
         <h3 slot="header" v-cloak>Appears in words</h3>
       </modal>
     </div>
+
+      <div id="footer">
+    <div class="ui grid container">
+      <div class="ui four wide column">
+        <p>Keep track on updates <i class="hand point down icon"></i></p>
+        <div>
+          <a class="github-button" href="https://github.com/mickmak-busicat/kotodaman-stat/subscription" data-size="large" aria-label="Watch mickmak-busicat/kotodaman-stat on GitHub">Watch</a>
+        </div>
+      </div>
+      <div class="ui four wide column">
+        <p>Contribute <i class="hand point down icon"></i></p>
+        <div>
+          <a class="github-button" href="https://github.com/mickmak-busicat/kotodaman-stat/fork" data-size="large" aria-label="Fork mickmak-busicat/kotodaman-stat on GitHub">Fork</a>
+        </div>
+      </div>
+      <div class="ui four wide column">
+        <p>Follow me on GitHub <i class="hand point down icon"></i></p>
+        <div>
+          <a class="github-button" href="https://github.com/mickmak-busicat" data-size="large" aria-label="Follow @mickmak-busicat on GitHub">Follow @mickmak-busicat</a>
+        </div>
+      </div>
+      <div class="ui four wide column">
+        <p>&copy; 2018</p>
+      </div>
+    </div>
+  </div>
+
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+  <script src="https://unpkg.com/vue"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/semantic.min.js"></script>
+  <script src="./words/2monji.js"></script>
+  <script src="./words/3monji.js"></script>
+  <script src="./words/4monji.js"></script>
+  <script src="./words/5monji.js"></script>
+  <script src="./words/6monji.js"></script>
+  <script src="./words/7monji.js"></script>
+  <script src="./words/groups.js"></script>
+
+  <script src="./js/components.js"></script>
+  <script src="./js/index.js"></script>
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-118747788-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-118747788-1');
+  </script>
+
+  </body>
+</html>
