@@ -11,3 +11,5 @@ Dataset is not complete. Feel free to request adding complete words list.
 - [x] Check word occurence for word starts with/ends with xxx
 - [ ] Check possible highest combo
 - [ ] Deck combination save & compare
+- [ ] Full multi-language support
+- [ ] mobile view support
