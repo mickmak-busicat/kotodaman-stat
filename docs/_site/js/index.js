@@ -304,7 +304,7 @@ function twitterShare(text){
   gtag('event', 'Share', {
     'event_category': 'Twitter share clicked',
   });
-  window.open("https://twitter.com/intent/tweet?link="+window.location.href+"&original_referer="+window.location.href+"&text="+encodeURIComponent(text), "share", "width=640,height=443");
+  window.open("https://twitter.com/intent/tweet?link="+window.location.href+"&original_referer="+window.location.href+"&text="+encodeURIComponent(window.location.href + " " + text), "share", "width=640,height=443");
 }
 
 function facebookShare(){

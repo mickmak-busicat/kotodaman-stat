@@ -1,0 +1,7 @@
+- 2monji.js: contain all 2-length words.
+- 3monji.js: contain all 3-length words
+- 4monji.js: contain all 4-length words
+- 5monji.js: contain all 5-length words
+- 6monji.js: contain all 6-length words
+- 7monji.js: contain all 7-length words
+- groups.js: Program logic use, no need to update in most cases.
