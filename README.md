@@ -9,8 +9,8 @@ Dataset is not complete. Feel free to request adding complete words list.
 ### Functions
 - [x] Choose word and see occurrence of each group by number of characters
 - [x] Check word occurence for word starts with/ends with xxx
-- [ ] Form to submit new word
+- [x] Form to submit new word
 - [ ] Check possible highest combo
 - [ ] Deck combination save & compare
-- [ ] Full multi-language support
+- [x] Full multi-language support
 - [ ] mobile view support
