@@ -84,6 +84,11 @@ const AppConfig = {
       if (this.missingWord.length > 1 && this.missingWord.length < 8) {
         var url = 'https://hook.io/mk.triniti/add-koto-word?w='+encodeURI(this.missingWord);
         $.get(url);
+
+        gtag('event', 'AddWord', {
+          'event_category': 'AddWordClicked',
+          'event_label': word,
+        });
       }
       this.missingWord = '';
     },
