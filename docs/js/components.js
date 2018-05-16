@@ -1,7 +1,12 @@
 Vue.component('example-text', {
   props: ['example'],
+  methods: {
+    __t: function(key) {
+      return this.$root.__t(key);
+    },
+  },
   template: `
-    <div v-cloak>Example: {{ example }}</div>`,
+    <div v-cloak>{{ __t('example-text') }}: {{ example }}</div>`,
 });
 
 Vue.component('words-input', {
@@ -25,6 +30,9 @@ Vue.component('words-input', {
 Vue.component('words-result-display', {
   props: ['result'],
   methods: {
+    __t: function(key) {
+      return this.$root.__t(key);
+    },
     getGroupDisplayByKey: function(group) {
       return this.$root.getGroupDisplayByKey(group);
     },
@@ -61,24 +69,24 @@ Vue.component('words-result-display', {
     <table class="ui compact striped definition table">
       <thead class="full-width">
         <tr>
-          <th><center>Result</center></th>
+          <th><center>{{ __t('result-text') }}</center></th>
           <th colspan="4">
-            <span class="ui brown tag label">Total Words Matched: {{ getTotalMatched() }} / {{ getStock(-1) }}</span>
-            <a class="ui red label" @click="openWordsModal('all', 7)">七文字 <div class="detail">{{ getGroupCountByLength("all", 7) }}  / {{ getStock(7) }}</div></a>
-            <a class="ui orange label" @click="openWordsModal('all', 6)">六文字 <div class="detail">{{ getGroupCountByLength("all", 6) }} / {{ getStock(6) }}</div></a>
-            <a class="ui yellow label" @click="openWordsModal('all', 5)">五文字 <div class="detail">{{ getGroupCountByLength("all", 5) }} / {{ getStock(5) }}</div></a>
-            <a class="ui olive label" @click="openWordsModal('all', 4)">四文字 <div class="detail">{{ getGroupCountByLength("all", 4) }} / {{ getStock(4) }}</div></a>
-            <a class="ui green label" @click="openWordsModal('all', 3)">三文字 <div class="detail">{{ getGroupCountByLength("all", 3) }} / {{ getStock(3) }}</div></a>
-            <a class="ui teal label" @click="openWordsModal('all', 2)">二文字 <div class="detail">{{ getGroupCountByLength("all", 2) }} / {{ getStock(2) }}</div></a>
+            <span class="ui brown tag label">{{ __t('total-match-text') }}: {{ getTotalMatched() }} / {{ getStock(-1) }}</span>
+            <a class="ui red label" @click="openWordsModal('all', 7)">{{ __t('monji.7-text') }} <div class="detail">{{ getGroupCountByLength("all", 7) }}  / {{ getStock(7) }}</div></a>
+            <a class="ui orange label" @click="openWordsModal('all', 6)">{{ __t('monji.6-text') }} <div class="detail">{{ getGroupCountByLength("all", 6) }} / {{ getStock(6) }}</div></a>
+            <a class="ui yellow label" @click="openWordsModal('all', 5)">{{ __t('monji.5-text') }} <div class="detail">{{ getGroupCountByLength("all", 5) }} / {{ getStock(5) }}</div></a>
+            <a class="ui olive label" @click="openWordsModal('all', 4)">{{ __t('monji.4-text') }} <div class="detail">{{ getGroupCountByLength("all", 4) }} / {{ getStock(4) }}</div></a>
+            <a class="ui green label" @click="openWordsModal('all', 3)">{{ __t('monji.3-text') }} <div class="detail">{{ getGroupCountByLength("all", 3) }} / {{ getStock(3) }}</div></a>
+            <a class="ui teal label" @click="openWordsModal('all', 2)">{{ __t('monji.2-text') }} <div class="detail">{{ getGroupCountByLength("all", 2) }} / {{ getStock(2) }}</div></a>
           </th>
         </tr>
       </thead>
       <thead class="full-width">
         <tr>
           <th></th>
-          <th><center>Rank</center></th>
-          <th>Occurrences</th>
-          <th>Words distribution</th>
+          <th><center>{{ __t('rank-text') }}</center></th>
+          <th>{{ __t('occurrences-text') }}</th>
+          <th>{{ __t('words-distribution-text') }}</th>
         </tr>
       </thead>
       <tbody>
@@ -87,30 +95,30 @@ Vue.component('words-result-display', {
             <words-input :group-key="rs.key" :group="getGroupDisplayByKey(rs.key)"></words-input>
           </td>
           <td><center><span :class="rankLabelClass(index)">{{ index+1 }}</span></center></td>
-          <td>{{ getGroupCount(rs.key) }} times</td>
+          <td>{{ getGroupCount(rs.key) }} {{ __t('times-text') }}</td>
           <td>
             <a class="ui red label" @click="openWordsModal(rs.key, 7)">
-              七文字 
+              {{ __t('monji.7-text') }} 
               <div class="detail">{{ getGroupCountByLength(rs.key, 7) }}</div>
             </a> 
             <a class="ui orange label" @click="openWordsModal(rs.key, 6)">
-              六文字 
+              {{ __t('monji.6-text') }} 
               <div class="detail">{{ getGroupCountByLength(rs.key, 6) }}</div>
             </a> 
             <a class="ui yellow label" @click="openWordsModal(rs.key, 5)">
-              五文字 
+              {{ __t('monji.5-text') }} 
               <div class="detail">{{ getGroupCountByLength(rs.key, 5) }}</div>
             </a> 
             <a class="ui olive label" @click="openWordsModal(rs.key, 4)">
-              四文字 
+              {{ __t('monji.4-text') }} 
               <div class="detail">{{ getGroupCountByLength(rs.key, 4) }}</div>
             </a> 
             <a class="ui green label" @click="openWordsModal(rs.key, 3)">
-              三文字 
+              {{ __t('monji.3-text') }} 
               <div class="detail">{{ getGroupCountByLength(rs.key, 3) }}</div>
             </a>
             <a class="ui teal label" @click="openWordsModal(rs.key, 2)">
-              二文字 
+              {{ __t('monji.2-text') }} 
               <div class="detail">{{ getGroupCountByLength(rs.key, 2) }}</div>
             </a>
           </td>
@@ -119,7 +127,7 @@ Vue.component('words-result-display', {
       <tfoot class="full-width">
         <tr>
           <th></th>
-          <th><center>0 match</center></th>
+          <th><center>0 {{ __t('match-text') }}</center></th>
           <th colspan="3">
             <words-input v-for="(rs, index) in result" v-if="getGroupCount(rs.key) === 0" :key="rs.key" :group-key="rs.key" :group="getGroupDisplayByKey(rs.key)"></words-input>
           </th>
@@ -132,6 +140,9 @@ Vue.component('modal', {
   methods: {
     filterWords: function() {
       return this.$root.filterMatchResult();
+    },
+    __t: function(key) {
+      return this.$root.__t(key);
     },
   },
   template: `
@@ -158,7 +169,7 @@ Vue.component('modal', {
               <center>
                 <slot name="footer">
                   <button class="button ui massive" @click="$emit('close')">
-                    Close
+                    {{ __t('close-text') }}
                   </button>
                 </slot>
               </center>

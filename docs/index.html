@@ -11,15 +11,26 @@ layout: layout
           <i class="arrow alternate circle up outline icon"></i>
         </button>
       </div>
+      <div id="language-select">
+        <button class="ui circular black icon button" @click="setLanguage('en')">
+          EN
+        </button>
+        <button class="ui circular black icon button" @click="setLanguage('jp')">
+          日
+        </button>
+        <button class="ui circular black icon button" @click="setLanguage('ch')">
+          中
+        </button>
+      </div>
       <div id="current-filter" v-scroll="handleScroll">
-        <div>[ Current filter ]</div>
+        <div>[ !(( __t('current-filter-text') )) ]</div>
         <div>
           <words-input v-for="(group, index) in pickedGroups" :key="index" :group-key="group" :group="getGroupDisplayByKey(group)" @click.native="scrollToTop"></words-input>
           <div class="clearfix"></div>
         </div>
       </div>
-      <div class="ui raised very padded text container segment" id="header-section">
-        <center><h2>コトダマン｜Word Stats</h2></center>
+      <div class="ui raised padded text container segment" id="header-section">
+        <center><h2>コトダマン｜<span v-cloak>!(( __t('header') ))</span></h2></center>
         <div class="ui grid container" id="input-section">
           <div class="ten wide computer eight wide tablet sixteen wide mobile column">
             <div id="clear-input">
@@ -31,35 +42,50 @@ layout: layout
               <div class="container" :style="{width: getInputWidth() + 'px'}">
                 <div class="empty-input" v-if="pickedGroups.length == 0" v-cloak>
                   <div>
-                    <i class="search icon"></i> Pick words from below
+                    <i class="search icon"></i> <span v-cloak>!(( __t('input-field-instruction') ))</span>
                   </div>
                 </div>
                 <words-input v-for="(group, index) in pickedGroups" :key="index" :group-key="group" :group="getGroupDisplayByKey(group)" v-on:click.native="throwAwayGroupAtIndex(index)"></words-input>
                 <div class="clearfix"></div>
               </div>
             </div>
+            <example-text :example="getMatchTypeExample(searchMethod)"></example-text>
           </div>
           <div class="six wide computer eight wide tablet sixteen wide mobile column">
             <div class="ui selection compact fluid dropdown">
               <input type="hidden" name="gender">
               <i class="dropdown icon"></i>
-              <div class="default text">Any position</div>
+              <div class="default text"><span v-cloak>!(( __t('filter.any-match') ))</span></div>
               <div class="menu">
-                <div class="item" data-value="MATCH" @click="changeSearchMethod(getMatchType('MATCH'))">Any match</div>
-                <div class="item" data-value="CONSECUTIVE" @click="changeSearchMethod(getMatchType('CONSECUTIVE'))">Consecutive words</div>
-                <div class="item" data-value="APPREARS" @click="changeSearchMethod(getMatchType('APPEARS'))">Words appears</div>
-                <div class="item" data-value="STARTS" @click="changeSearchMethod(getMatchType('STARTS'))">Starts with words</div>
-                <div class="item" data-value="ENDS" @click="changeSearchMethod(getMatchType('ENDS'))">Ends with words</div>
+                <div class="item" data-value="MATCH" @click="changeSearchMethod(getMatchType('MATCH'))">!(( __t('filter.any-match') ))</div>
+                <div class="item" data-value="CONSECUTIVE" @click="changeSearchMethod(getMatchType('CONSECUTIVE'))">!(( __t('filter.consecutive-words') ))</div>
+                <div class="item" data-value="APPREARS" @click="changeSearchMethod(getMatchType('APPEARS'))">!(( __t('filter.words-appears') ))</div>
+                <div class="item" data-value="STARTS" @click="changeSearchMethod(getMatchType('STARTS'))">!(( __t('filter.starts-with') ))</div>
+                <div class="item" data-value="ENDS" @click="changeSearchMethod(getMatchType('ENDS'))">!(( __t('filter.ends-with') ))</div>
               </div>
             </div>
             <div class="ui" id="filter-button-container">
               <button class="ui fluid large right labeled icon button positive" @click="applyFilterClick">
-                Filter
+                <span v-cloak>!(( __t('filter-text') ))</span>
                 <i class="filter icon"></i>
               </button>
             </div>
+            <div id="words-form" class="ui fluid form mini">
+              <div class="field">
+                <div class="ui action input">
+                  <input type="text" v-bind:placeholder="__t('missing-word-instruction')" v-model="missingWord">
+                  <button class="ui icon button yellow" @click="submitMissingWords">
+                    <i class="plus icon"></i>
+                  </button>
+                </div>
+                <div class="ui pointing label yellow"><span v-cloak>!(( __t('hiragana-only-text') ))</span></div>
+                <div class="ui label mini orange">
+                  <span v-cloak>!(( __t('in-db-text') ))</span>
+                  <div class="detail"><span v-cloak>!(( getStock() ))</span></div>
+                </div>
+              </div>
+            </div>
           </div>
-          <example-text :example="getMatchTypeExample(searchMethod)"></example-text>
         </div>
       </div>
 
@@ -67,7 +93,7 @@ layout: layout
         <div class="ui accordion fluid styled" id="word-panel" ref="wordPanel">
           <div class="title active">
             <i class="icon dropdown"></i>
-            Picks any word to filter
+            <span v-cloak>!(( __t('pick-word-instruction') ))</span>
           </div>
           <div class="content active">
             <div class="input-panel">
@@ -85,6 +111,6 @@ layout: layout
       </div>
 
       <modal v-if="showModal" @close="showModal = false">
-        <h3 slot="header" v-cloak>Appears in words</h3>
+        <h3 slot="header" v-cloak>!(( __t('appears-in-words-text') ))</h3>
       </modal>
     </div>

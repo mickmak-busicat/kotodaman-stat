@@ -16,11 +16,14 @@ const MATCH_TYPE_EXAMPLE = {
 }
 const AppConfig = {
   el: '#app',
+  delimiters: ['!((', '))'],
   data: {
     groups: groups,
     characterGroups: {},
     wordsDB: [],
     showModal: false,
+    missingWord: '',
+    language: 'jp',
 
     pickedGroups: [],
     searchMethod: MATCH_TYPE_CONST.MATCH,
@@ -50,6 +53,18 @@ const AppConfig = {
     this.showCountByWords();
   },
   methods: {
+    __t: function(key) {
+      var lang = APP_TEXT[this.language];
+      return lang[key] || key;
+    },
+    setLanguage: function(lang) {
+      this.language = APP_TEXT[lang] ? lang : 'jp';
+
+      gtag('event', 'Language', {
+        'event_category': 'SetLanguageClicked',
+        'event_label': lang,
+      });
+    },
     resetCountResult: function () {
       for (var key in this.groups){
         this.countResultByGroup[key] = 0;
@@ -64,6 +79,13 @@ const AppConfig = {
       });
       $(this.$refs.wordPanel).accordion('close', 0);
       this.showCountByWords();
+    },
+    submitMissingWords: function(word) {
+      if (this.missingWord.length > 1 && this.missingWord.length < 8) {
+        var url = 'https://hook.io/mk.triniti/add-koto-word?w='+encodeURI(this.missingWord);
+        $.get(url);
+      }
+      this.missingWord = '';
     },
     isSkipWord: function (word){
       if (this.pickedGroups.length === 0){

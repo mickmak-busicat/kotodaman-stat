@@ -271,6 +271,18 @@ box-shadow: 2px 2px 5px 0px rgba(0,0,0,0.75);
 
 #social-section {
   position: absolute;
-  top: 16px;
+  top: 24px;
   right: 32px;
+  z-index: 1000;
+}
+
+#words-form {
+  margin-top: 24px;
+}
+
+#language-select {
+  position: absolute;
+  top: 80px;
+  right: 32px;
+  z-index: 1000;
 }
