@@ -254,7 +254,7 @@ const AppConfig = {
     },
     resetFilter: function() {
       this.pickedGroups = [];
-      this.showCountByWords();
+      // this.showCountByWords();
 
       gtag('event', 'Filter', {
         'event_category': 'FilterReset',

@@ -49,5 +49,5 @@ groupho: ['ほ', 'ぼ', 'ぽ'],
 groupmo: ['も'],
 groupro: ['ろ'],
 groupyo: ['よ', 'ょ'],
-groupwo: ['を'],
+groupwild: ['○'],
 };
