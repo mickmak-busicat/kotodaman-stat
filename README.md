@@ -13,4 +13,5 @@ Dataset is not complete. Feel free to request adding complete words list.
 - [ ] Check possible highest combo
 - [ ] Deck combination save & compare
 - [x] Full multi-language support
-- [ ] mobile view support
+- [ ] better mobile view support
+- [ ] wild card match character support
