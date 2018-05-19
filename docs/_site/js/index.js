@@ -26,7 +26,7 @@ const AppConfig = {
     language: 'jp',
 
     pickedGroups: [],
-    searchMethod: MATCH_TYPE_CONST.MATCH,
+    searchMethod: MATCH_TYPE_CONST.CONSECUTIVE,
 
     countResultByGroup: {},
     countResultByGroupAndLength: {},
@@ -256,6 +256,7 @@ const AppConfig = {
     resetFilter: function() {
       this.pickedGroups = [];
       // this.showCountByWords();
+      $(this.$refs.wordPanel).accordion('open', 0);
 
       gtag('event', 'Filter', {
         'event_category': 'FilterReset',
