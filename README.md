@@ -14,4 +14,4 @@ Dataset is not complete. Feel free to request adding complete words list.
 - [ ] Deck combination save & compare
 - [x] Full multi-language support
 - [ ] better mobile view support
-- [ ] wild card match character support
+- [x] wild card match character support
