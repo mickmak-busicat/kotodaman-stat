@@ -121,6 +121,7 @@ const AppConfig = {
         var findAll = true;
 
         for (var index in groups) {
+          if (groups[index] === 'groupx') continue;
           var tmpWord = word.replace(new RegExp('[' + this.groups[groups[index]].join('') + ']'), CROSSOUT);
           findAll = findAll && (tmpWord !== word);
           word = tmpWord;
@@ -206,7 +207,7 @@ const AppConfig = {
       var _vm = this;
       var groups = [].concat(this.pickedGroups);
       return groups.length==0 ? '' : groups.reduce(function(resultRegex, group){
-        return resultRegex = resultRegex + '['+ _vm.groups[group].join('')+ ']';
+        return resultRegex = resultRegex + (group === 'groupx' ? '.' : '['+ _vm.groups[group].join('')+ ']');
       }, '');
     },
     getSearchCharSet: function() {

@@ -144,6 +144,25 @@ background: linear-gradient(135deg, #959595 0%,#0d0d0d 46%,#010101 50%,#0a0a0a 5
 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#959595', endColorstr='#1b1b1b',GradientType=1 );
 }
 
+.monji.groupx .big-text{
+  border: 2px #c67fd8 solid;
+
+  background: #fefcea;
+background: -moz-radial-gradient(center, ellipse cover, #fefcea 0%, #efe869 56%, #f29b37 62%, #ea35d2 65%, #ea35d2 68%, #ea35d2 68%, #3fdb34 76%, #33ddd8 80%, #3734e5 87%);
+background: -webkit-radial-gradient(center, ellipse cover, #fefcea 0%,#efe869 56%,#f29b37 62%,#ea35d2 65%,#ea35d2 68%,#ea35d2 68%,#3fdb34 76%,#33ddd8 80%,#3734e5 87%);
+background: radial-gradient(ellipse at center, #fefcea 0%,#efe869 56%,#f29b37 62%,#ea35d2 65%,#ea35d2 68%,#ea35d2 68%,#3fdb34 76%,#33ddd8 80%,#3734e5 87%);
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fefcea', endColorstr='#3734e5',GradientType=1 );
+}
+.monji.groupx .forms {
+  border: 1px #e4e4e4 solid;
+
+  background: #ff7575;
+background: -moz-linear-gradient(-45deg, #ff7575 0%, #79e050 27%, #2facce 56%, #2facce 56%, #cd32db 77%, #ff2327 100%);
+background: -webkit-linear-gradient(-45deg, #ff7575 0%,#79e050 27%,#2facce 56%,#2facce 56%,#cd32db 77%,#ff2327 100%);
+background: linear-gradient(135deg, #ff7575 0%,#79e050 27%,#2facce 56%,#2facce 56%,#cd32db 77%,#ff2327 100%);
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ff7575', endColorstr='#ff2327',GradientType=1 );
+}
+
 .monji .big-text{
   width: 48px;
   height: 48px;

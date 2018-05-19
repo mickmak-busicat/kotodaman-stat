@@ -15,14 +15,17 @@ Vue.component('words-input', {
     getGroupClassName: function(key) {
       var className = 'group' + key[key.length-1];
       if (this.isClearfix !== undefined) {
-        return 'monji ' + className + (className === key && className !== 'groupn' ? ' clearfix' : '');
+        return 'monji ' + className + (className === key && className !== 'groupn' && className !== 'groupx' ? ' clearfix' : '');
       }
       return 'monji ' + className;
     },
+    getGroupDisplayName: function() {
+      return this.groupKey === 'groupx' ? 'Any' : this.group.join(",");
+    }
   },
   template: `
     <div :class="getGroupClassName(groupKey)"> 
-      <div class="forms">{{ group.join(",") }}</div> 
+      <div class="forms">{{ getGroupDisplayName() }}</div> 
       <div class="big-text"><div>{{ group[0] }}</div></div> 
     </div>`,
 });
