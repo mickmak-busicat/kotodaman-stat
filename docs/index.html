@@ -30,7 +30,7 @@ layout: layout
         </div>
       </div>
       <div class="ui raised padded text container segment" id="header-section">
-        <center><h2>コトダマン｜<span v-cloak>!(( __t('header') ))</span></h2></center>
+        <center><h2>コトダマン<span v-cloak>｜!(( __t('header') ))</span></h2></center>
         <div class="ui grid container" id="input-section">
           <div class="ten wide computer eight wide tablet sixteen wide mobile column">
             <div id="clear-input">
@@ -50,8 +50,8 @@ layout: layout
               </div>
             </div>
             <example-text :example="getMatchTypeExample(searchMethod)"></example-text>
-            <div class="ui orange segment">
-              * Words database from <a href="http://www.edrdg.org/jmdict/edict.html" target="_blank">here <i class="external alternate icon"></i></a>. Some words may not be actually available during the game. <a href="https://airtable.com/shrHZcHAdfKJpuEyo" target="_blank">You can help report them <i class="external alternate icon"></i></a>
+            <div class="ui purple segment">
+              * <span v-cloak>!(( __t('header.db-description-text1') ))</span> <a href="http://www.edrdg.org/jmdict/edict.html" target="_blank"><span v-cloak>!(( __t('header.db-description-text2') ))</span> <i class="external alternate icon"></i></a><span v-cloak>!(( __t('header.db-description-text3') ))</span><br/><a href="https://airtable.com/shrHZcHAdfKJpuEyo" target="_blank"><span v-cloak>!(( __t('header.db-description-text4') ))</span> <i class="external alternate icon"></i></a>
             </div>
           </div>
           <div class="six wide computer eight wide tablet sixteen wide mobile column">

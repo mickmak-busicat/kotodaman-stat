@@ -16,6 +16,8 @@ var APP_TEXT = {
     'in-db-text': 'Database',
     'current-filter-text': 'Current filter',
 
+    'modal.search-text': 'Search ...',
+
     'filter.any-match': 'Any match',
     'filter.consecutive-words': 'Consecutive words',
     'filter.words-appears': 'Words appears',
@@ -32,6 +34,11 @@ var APP_TEXT = {
     'monji.4-text': '4-length',
     'monji.3-text': '3-length',
     'monji.2-text': '2-length',
+
+    'header.db-description-text1': 'Words database comes from',
+    'header.db-description-text2': 'here',
+    'header.db-description-text3': ', so some words may not be actually available during the game.',
+    'header.db-description-text4': 'You can help report them via this form.',
   },
   jp: {
     'header': '言葉統計',
@@ -50,6 +57,8 @@ var APP_TEXT = {
     'in-db-text': '在庫',
     'current-filter-text': '検索中',
 
+    'modal.search-text': '検索 ...',
+
     'filter.any-match': 'を任意に含む',
     'filter.consecutive-words': 'を連続に含む',
     'filter.words-appears': 'を含む',
@@ -66,6 +75,11 @@ var APP_TEXT = {
     'monji.4-text': '四文字',
     'monji.3-text': '三文字',
     'monji.2-text': '二文字',
+
+    'header.db-description-text1': '言葉のデータベースは',
+    'header.db-description-text2': 'これを使用しています',
+    'header.db-description-text3': 'から、ゲーム内に発動しない言葉があるかもしれません。',
+    'header.db-description-text4': '言葉を修正したい方：こちらへ',
   },
   ch: {
     'header': '單字統計',
@@ -84,6 +98,8 @@ var APP_TEXT = {
     'in-db-text': '資料庫',
     'current-filter-text': '過濾中單字',
 
+    'modal.search-text': '搜尋字 ...',
+
     'filter.any-match': '任何符合',
     'filter.consecutive-words': '連續出現',
     'filter.words-appears': '任意出現',
@@ -100,5 +116,10 @@ var APP_TEXT = {
     'monji.4-text': '四字詞',
     'monji.3-text': '三字詞',
     'monji.2-text': '二字詞',
+
+    'header.db-description-text1': '單字字庫來自',
+    'header.db-description-text2': '這裡',
+    'header.db-description-text3': '。 所以可能會有部份單字不能在遊戲中使用。',
+    'header.db-description-text4': '你可以在這回報有問題的單字',
   },
 };

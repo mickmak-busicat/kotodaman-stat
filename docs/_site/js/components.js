@@ -164,7 +164,7 @@ Vue.component('modal', {
   },
   data: function () {
     return {
-      maxResult: 500,
+      maxResult: 200,
       searchResult: [],
       filteredByLength: [],
     };
@@ -180,7 +180,7 @@ Vue.component('modal', {
                 default header
               </slot>
               <div class="ui icon input fluid">
-                <input type="text" placeholder="Search..." @keyup.enter="addfilter">
+                <input type="text" v-bind:placeholder="__t('modal.search-text')" @keyup.enter="addfilter">
                 <i class="search icon"></i>
               </div>
             </div>
