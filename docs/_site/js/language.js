@@ -17,6 +17,8 @@ var APP_TEXT = {
     'current-filter-text': 'Current filter',
 
     'modal.search-text': 'Search ...',
+    'modal.more-text-1': 'Only display first',
+    'modal.more-text-2': 'result. Use search to find more.',
 
     'filter.any-match': 'Any match',
     'filter.consecutive-words': 'Consecutive words',
@@ -58,6 +60,8 @@ var APP_TEXT = {
     'current-filter-text': '検索中',
 
     'modal.search-text': '検索 ...',
+    'modal.more-text-1': '検索結果は',
+    'modal.more-text-2': 'だけです。検索を使ってください。',
 
     'filter.any-match': 'を任意に含む',
     'filter.consecutive-words': 'を連続に含む',
@@ -99,6 +103,8 @@ var APP_TEXT = {
     'current-filter-text': '過濾中單字',
 
     'modal.search-text': '搜尋字 ...',
+    'modal.more-text-1': '只顯示首',
+    'modal.more-text-2': '個單字。使用搜尋尋找更多結果。',
 
     'filter.any-match': '任何符合',
     'filter.consecutive-words': '連續出現',

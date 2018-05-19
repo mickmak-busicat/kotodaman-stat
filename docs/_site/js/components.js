@@ -189,6 +189,9 @@ Vue.component('modal', {
                 <div class="item word-item" v-for="(rs, index) in getResult().slice(0, maxResult)">
                   <span><i class="book icon"></i>{{ index+1 }}. </span><span class="text-display">{{ rs }}</span>
                 </div>
+                <div class="item word-item" v-if="filteredByLength.length > maxResult">
+                  <span><i class="ellipsis horizontal icon"></i> {{ __t('modal.more-text-1') }} {{ maxResult }} {{ __t('modal.more-text-2') }} </span>
+                </div>
               </div>
             </div>
 
