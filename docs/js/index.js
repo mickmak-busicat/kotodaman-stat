@@ -80,15 +80,20 @@ const AppConfig = {
       $(this.$refs.wordPanel).accordion('close', 0);
       this.showCountByWords();
     },
-    submitMissingWords: function(word) {
-      if (this.missingWord.length > 1 && this.missingWord.length < 8) {
-        var url = 'https://hook.io/mk.triniti/add-koto-word?w='+encodeURI(this.missingWord);
-        $.get(url);
+    submitMissingWords: function() {
+      var word = this.missingWord;
+      console.log(this.wordsDB.indexOf(word));
+      if (word.length > 1 && word.length < 8) {
+        if(this.wordsDB.indexOf(word) === -1){
+          this.wordsDB.push(word);
+          var url = 'https://hook.io/mk.triniti/add-koto-word?w='+encodeURI(word);
+          $.get(url);
 
-        gtag('event', 'AddWord', {
-          'event_category': 'AddWordClicked',
-          'event_label': word,
-        });
+          gtag('event', 'AddWord', {
+            'event_category': 'AddWordClicked',
+            'event_label': word,
+          });
+        }
       }
       this.missingWord = '';
     },
@@ -149,9 +154,13 @@ const AppConfig = {
           groupsAppearedInWord[_vm.characterGroups[checkChar]] = true;
         }
         for(var groupKey in groupsAppearedInWord) {
-          result[groupKey] ++;
-          resultWords[groupKey][tmpWord.length] ++;
-          total ++;
+          try {
+            result[groupKey] ++;
+            resultWords[groupKey][tmpWord.length] ++;
+            total ++;
+          } catch (e) {
+            console.log(tmpWord);
+          }
         }
         resultWords.all[tmpWord.length] ++;
       });
@@ -172,11 +181,12 @@ const AppConfig = {
       });
 
       // Instant update?
-      this.showCountByWords();
+      // this.showCountByWords();
     },
     filterMatchResult: function() {
       var group = this.showGroup;
       var length = this.showLength;
+      var matched = 0;
 
       return this.matchedWords.filter(function(word) {
         var searchCharacters = this.groups[group];
@@ -227,7 +237,7 @@ const AppConfig = {
         inputContainer.scrollLeft = inputContainer.scrollWidth;
 
         // Instant update?
-        this.showCountByWords();
+        // this.showCountByWords();
       }
 
       gtag('event', 'Filter', {

@@ -8,7 +8,7 @@ groupha: ['は', 'ば', 'ぱ'],
 groupma: ['ま'],
 groupra: ['ら'],
 groupya: ['や', 'ゃ'],
-groupwa: ['わ'],
+groupwa: ['わ', 'ゎ'],
 
 groupi: ['い', 'ぃ'],
 groupki: ['き', 'ぎ'],

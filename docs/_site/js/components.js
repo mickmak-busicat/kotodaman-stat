@@ -139,11 +139,35 @@ Vue.component('words-result-display', {
 Vue.component('modal', {
   methods: {
     filterWords: function() {
-      return this.$root.filterMatchResult();
+      this.filteredByLength = this.$root.filterMatchResult();
+      this.searchResult = this.filteredByLength;
+      return this.filteredByLength;
     },
     __t: function(key) {
       return this.$root.__t(key);
     },
+    addfilter: function(e) {
+      var searchText = e.target.value;
+      this.searchResult = this.filteredByLength.filter(function(word) {
+        if (searchText.length > 0) {
+          return !!~word.indexOf(searchText);
+        }
+        return true;
+      });
+    },
+    getResult: function() {
+      if( this.filteredByLength.length === 0) {
+        return this.filterWords();
+      }
+      return this.searchResult;
+    }
+  },
+  data: function () {
+    return {
+      maxResult: 500,
+      searchResult: [],
+      filteredByLength: [],
+    };
   },
   template: `
     <transition name="modal">
@@ -155,11 +179,14 @@ Vue.component('modal', {
               <slot name="header">
                 default header
               </slot>
+              <div class="ui icon input fluid">
+                <input type="text" placeholder="Search..." @keyup.enter="addfilter">
+                <i class="search icon"></i>
+              </div>
             </div>
-
             <div class="modal-body">
               <div class="ui list">
-                <div class="item word-item" v-for="(rs, index) in filterWords()">
+                <div class="item word-item" v-for="(rs, index) in getResult().slice(0, maxResult)">
                   <span><i class="book icon"></i>{{ index+1 }}. </span><span class="text-display">{{ rs }}</span>
                 </div>
               </div>
