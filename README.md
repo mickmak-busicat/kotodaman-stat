@@ -18,3 +18,4 @@ Dataset is not complete. Feel free to request adding complete words list.
 - [x] Full multi-language support
 - [ ] better mobile view support
 - [x] wild card match character support
+- [ ] Support for special type word(event)
