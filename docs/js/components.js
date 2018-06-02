@@ -212,3 +212,74 @@ Vue.component('modal', {
       </div>
     </transition>`,
 });
+Vue.component('method-dropdown', {
+  mounted: function() {
+    $(this.$el).dropdown();
+  },
+  methods: {
+    changeSearchMethod: function(method) {
+      return this.$root.changeSearchMethod(method);
+    },
+    __t: function(key) {
+      return this.$root.__t(key);
+    },
+    getMatchType: function(type) {
+      return this.$root.getMatchType(type);
+    }
+  },
+  template: `
+    <div class="ui selection compact fluid dropdown">
+      <input type="hidden" name="gender">
+      <i class="dropdown icon"></i>
+      <div class="default text"><span v-cloak>{{ __t('filter.consecutive-words') }}</span></div>
+      <div class="menu">
+        <div class="item" data-value="CONSECUTIVE" @click="changeSearchMethod(getMatchType('CONSECUTIVE'))">{{ __t('filter.consecutive-words') }}</div>
+        <div class="item" data-value="STARTS" @click="changeSearchMethod(getMatchType('STARTS'))">{{ __t('filter.starts-with') }}</div>
+        <div class="item" data-value="ENDS" @click="changeSearchMethod(getMatchType('ENDS'))">{{ __t('filter.ends-with') }}</div>
+        <div class="item" data-value="MATCH" @click="changeSearchMethod(getMatchType('MATCH'))">{{ __t('filter.any-match') }}</div>
+        <div class="item" data-value="APPREARS" @click="changeSearchMethod(getMatchType('APPEARS'))">{{ __t('filter.words-appears') }}</div>
+      </div>
+    </div>`,
+});
+Vue.component('word-select-accordion', {
+  mounted: function() {
+    $(this.$el).accordion();
+  },
+  methods: {
+    changeSearchMethod: function(method) {
+      return this.$root.changeSearchMethod(method);
+    },
+    __t: function(key) {
+      return this.$root.__t(key);
+    },
+    getGroupDisplayByKey: function(key) {
+      return this.$root.getGroupDisplayByKey(key);
+    },
+    pickGroup: function(group) {
+      return this.$root.pickGroup(group);
+    },
+    getCountResultByGroup: function() {
+      return this.$root.countResultByGroup;
+    },
+    open: function() {
+      $(this.$el).accordion('open', 0);
+    },
+    close: function() {
+      $(this.$el).accordion('close', 0);
+    },
+  },
+  template: `
+  <div class="ui accordion fluid styled" id="word-panel">
+    <div class="title active">
+      <i class="icon dropdown"></i>
+      <span v-cloak>{{ __t('pick-word-instruction') }}</span>
+    </div>
+    <div class="content active">
+      <div class="input-panel">
+        <words-input v-for="(count, group) in getCountResultByGroup()" :key="group" :group-key="group" :group="getGroupDisplayByKey(group)" is-clearfix v-on:click.native="pickGroup(group)"></words-input>
+        <div class="clearfix"></div>
+      </div>
+    </div>
+  </div>
+  `,
+});

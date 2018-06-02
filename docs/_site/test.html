@@ -1,0 +1,170 @@
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="./words/2monji.js"></script>
+<script src="./words/3monji.js"></script>
+<script src="./words/4monji.js"></script>
+<script src="./words/5monji.js"></script>
+<script src="./words/6monji.js"></script>
+<script src="./words/7monji.js"></script>
+<script src="./words/groups.js"></script>
+
+
+<script>
+var getPermutations = function(inputArr) {
+  var results = [];
+
+  var permute = function(arr, memo) {
+    var cur, memo = memo || [];
+
+    for (var i = 0; i < arr.length; i++) {
+      cur = arr.splice(i, 1);
+      if (arr.length === 0) {
+        results.push(memo.concat(cur));
+      }
+      permute(arr.slice(), memo.concat(cur));
+      arr.splice(i, 0, cur[0]);
+    }
+
+    return results;
+  }
+
+  return permute(inputArr);
+}
+var getCombinations = function(inputArr, exactLen) {
+  var fn = function(n, src, got, all) {
+    if (n == 0) {
+      if (got.length > 0) {
+        all[all.length] = got;
+      }
+      return;
+    }
+    for (var j = 0; j < src.length; j++) {
+      fn(n - 1, src.slice(j + 1), got.concat([src[j]]), all);
+    }
+    return;
+  }
+  var all = [];
+  fn(exactLen, inputArr, [], all);
+  return all;
+}
+
+var getWordRegex = function (inputGroups, word){
+
+}
+
+var filterWords = function(wordsDB, question, groupsArray) {
+  var deckPattern = $.unique(groupsArray.slice()).reduce(function(result, group) {
+    return result = result + groups[group].join('');
+  }, '');
+  // var questionPattern = '^' + question.replace(/x/g, '['+deckPattern+']?') + '$';
+  var antiPattern = '[^' + deckPattern + question + ']+';
+  // antiPattern = question.split('x').filter(p => p.length > 0);
+  // .reduce(function(final, phase) {
+  //   return final + '|^' + phase + '$';
+  // }, antiDeckPattern);
+  // console.log(antiPattern);
+  return wordsDB.filter(w => w.match(antiPattern) === null); //.filter(w => w.match(questionPattern) !== null);
+}
+
+var getCombo = function(filteredDB, filledParts) {
+  var result = [];
+  var count = 0;
+
+  for (var matchLength=2; matchLength<=filledParts.length; matchLength++) {
+    var index = 0;
+    do {
+      var pattern = '^' + filledParts.slice(index, index + matchLength).join('') + '$';
+      if (pattern.indexOf('[') !== -1) {
+        var matched = filteredDB.filter(w => w.length === matchLength && w.match(pattern) !== null);
+        if (matched.length > 0) {
+          result = result.concat(matched);
+          count ++;
+        }
+      }
+      index ++;
+    } while (index+matchLength <= filledParts.length);
+  }
+  return {
+    placemnet: filledParts,
+    words: result,
+    count: count,
+  };
+}
+
+  var minimumCombo = 6;
+  var wordsDB = [];
+  wordsDB = wordsDB.concat(monji7);
+  wordsDB = wordsDB.concat(monji6);
+  wordsDB = wordsDB.concat(monji5);
+  wordsDB = wordsDB.concat(monji4);
+  wordsDB = wordsDB.concat(monji3);
+  wordsDB = wordsDB.concat(monji2);
+  var characterGroups = {};
+  var question = 'xxちょうxx';
+  var deck = [
+  'groupto', 'groupn', 'groupya', 'groupu',
+  'groupsa', 'groupko', 'groupku', 'groupi',
+  'groupri', 'groupka', 'groupko', 'groupyu'];
+
+  var hand = [0, 9, 10, 11];
+  var matches = hand.map(h => hand.reduce(function(resultObject, handGroup) {
+    resultObject[deck[handGroup]] = [];
+    return resultObject;
+  }, {}));
+
+  for (var key in groups){
+    groups[key].forEach(function(jpChar, index) {
+      characterGroups[jpChar] = key;
+    });
+  }
+
+  var t = new Date().getTime();
+  var filteredDB = filterWords(wordsDB, question, deck);
+  var fullHandCombo = [];
+  console.log('filter time: ', new Date().getTime() - t);
+  console.log('data ready', wordsDB.length, filteredDB.length, characterGroups, matches);
+
+  var checkedCount = 0;
+  t = new Date().getTime();
+  for(var i=0; i<hand.length; i++) {
+    var positions = [0,1,2,3,4,5,6,7,8,9,10,11];
+    for(var j=0; j<=i; j++) {
+      var pos = positions.indexOf(hand[j]);
+      positions.splice(pos, 1);
+    }
+    var cb = getCombinations(positions, 3);
+    cb = cb.map(c => {c.push(hand[i]); return c;});
+    console.log('cb length', positions, deck[hand[i]]);
+    for (var cbIdx=0; cbIdx<cb.length; cbIdx++) {
+      var choiceArr = cb[cbIdx];
+      var pm = getPermutations(choiceArr);
+      var usingGroups = choiceArr.map(c => deck[c]);
+      var sentenceDB = filterWords(filteredDB, question, usingGroups);
+      for (var pmIdx=0; pmIdx<pm.length; pmIdx++) {
+        var filledSentence = pm[pmIdx].reduce(function(fill, group) {
+          return fill.replace('x', '[' + groups[deck[group]].join('') + ']');
+        }, question.split('').join(','));
+        var filledParts = filledSentence.split(',');
+        var combo = getCombo(sentenceDB, filledParts);
+        if (combo.count >= minimumCombo) {
+          var comboScore = 0;
+          for (var k=0; k<hand.length; k++) {
+            var appearPos = pm[pmIdx].indexOf(hand[k]);
+            if (appearPos !== -1) {
+              comboScore ++;
+              matches[appearPos][deck[hand[k]]].push(combo);
+            }
+          }
+          combo.score = comboScore;
+          if (comboScore == 4) {
+            fullHandCombo.push(combo);
+          }
+        }
+        checkedCount ++;
+      }
+    }
+  }
+  console.log('result time: ', new Date().getTime() - t);
+  console.log('finished', checkedCount, matches, fullHandCombo);
+</script>
+

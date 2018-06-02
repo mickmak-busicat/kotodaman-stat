@@ -32,6 +32,14 @@ const AppConfig = {
     countResultByGroupAndLength: {},
     matchedWords: [],
     totalMatched: 0,
+
+    currentTab: 0,
+
+    // For battle function
+    battleDeck: [],
+    battleHand: [],
+    battleUsed: [],
+    filteredDB: [],
   },
   created: function() {
     var _vm = this;
@@ -77,7 +85,8 @@ const AppConfig = {
       gtag('event', 'Filter', {
         'event_category': 'ApplyFilterClicked',
       });
-      $(this.$refs.wordPanel).accordion('close', 0);
+      this.$refs.wordPanel.close();
+      this.$emit('wordSelectClose');
       this.showCountByWords();
     },
     submitMissingWords: function() {
@@ -232,19 +241,25 @@ const AppConfig = {
       return result;
     },
     pickGroup: function(group) {
-      if (this.pickedGroups.length < MAX_INPUT) {
-        this.pickedGroups.push(group);
-        var inputContainer = this.$el.querySelector("#group-input");
-        inputContainer.scrollLeft = inputContainer.scrollWidth;
+      if (this.currentTab == 0) {
+        // Stats mode
+        if (this.pickedGroups.length < MAX_INPUT) {
+          this.pickedGroups.push(group);
+          var inputContainer = this.$el.querySelector("#group-input");
+          inputContainer.scrollLeft = inputContainer.scrollWidth;
 
-        // Instant update?
-        // this.showCountByWords();
+          // Instant update?
+          // this.showCountByWords();
+        }
+
+        gtag('event', 'Filter', {
+          'event_category': 'WordPicked',
+          'group': group,
+        });
+      } else if (this.currentTab == 1){
+        // Battle mode
       }
-
-      gtag('event', 'Filter', {
-        'event_category': 'WordPicked',
-        'group': group,
-      });
+      
     },
     throwAwayGroupAtIndex: function(index) {
       gtag('event', 'Filter', {
@@ -256,7 +271,7 @@ const AppConfig = {
     resetFilter: function() {
       this.pickedGroups = [];
       // this.showCountByWords();
-      $(this.$refs.wordPanel).accordion('open', 0);
+      this.$refs.wordPanel.open();
 
       gtag('event', 'Filter', {
         'event_category': 'FilterReset',
@@ -319,13 +334,21 @@ const AppConfig = {
       var body = $("html, body");
       body.stop().animate({scrollTop:0}, 200, 'swing');
 
-      $(this.$refs.wordPanel).accordion('open', 0);
+      this.$refs.wordPanel.open();
 
       gtag('event', 'Page', {
         'event_category': 'ScrollToTopClicked',
       });
+    },
+    switchTab: function(tab) {
+      this.currentTab = tab;
     }
-  }
+  },
+  events: {
+    'fade-done': function () {
+      console.log('fade done');
+    }
+  },
 };
 
 Vue.directive('scroll', {
@@ -356,7 +379,5 @@ function facebookShare(){
 $( document ).ready(function() {
   var app = new Vue(AppConfig);
 
-  $('.ui.dropdown').dropdown();
   $('.ui.sticky').sticky({context: '#app'});
-  $('.ui.accordion').accordion();
 });

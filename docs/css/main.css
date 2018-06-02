@@ -276,7 +276,7 @@ box-shadow: 2px 2px 5px 0px rgba(0,0,0,0.75);
 }
 
 #header-section {
-  background: #fff url('../images/headerbg.png') no-repeat -70% 0%;
+  background: #fff url('../images/headerbg.png') no-repeat -50% -40px;
 }
 
 #footer {
@@ -304,4 +304,11 @@ box-shadow: 2px 2px 5px 0px rgba(0,0,0,0.75);
   top: 80px;
   right: 32px;
   z-index: 1000;
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
 }
