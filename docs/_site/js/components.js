@@ -285,7 +285,7 @@ Vue.component('word-select-accordion', {
   `,
 });
 Vue.component('question-word-select', {
-  props: ['index', 'value'],
+  props: ['index', 'value', 'updateQuestion'],
   data: function() {
     return {
       char: ''
@@ -305,12 +305,12 @@ Vue.component('question-word-select', {
           return 1;
         }));
     },
-    updateQuestion: function(index) {
-      return this.$root.updateQuestion(this.char, index);
-    }
+    // updateQuestion: function(charindex) {
+    //   return this.$root.updateQuestion(this.char, index);
+    // }
   },
   template: `
-    <select class="ui dropdown compact" v-model="char" @change="updateQuestion(index)">
+    <select class="ui dropdown compact" v-model="char" @change="updateQuestion(char, index)">
       <option :value="char.key" v-for="(char, index) in getAllWords()">{{ char.text }}</option>
     </select>
   `,
@@ -366,7 +366,7 @@ Vue.component('battle-input-section', {
     },
     pickHandCard: function(index) {
       this.currentPickGroup = index;
-      this.currentPickIndex = this.currentPickIndex === -1 ? 0 : (this.currentPickIndex + 1) % (this.$root.battleHand.length - this.$root.battleUsed.length);
+      this.currentPickIndex = this.currentPickIndex === -1 ? 0 : (this.currentPickIndex + 1) % (HAND_MAX - this.$root.battleUsed.length);
     },
     getDeck: function() {
       return this.$root.battleDeck;
@@ -374,17 +374,20 @@ Vue.component('battle-input-section', {
     getHand: function() {
       return this.$root.battleHand;
     },
-    getHandGroup: function() {
-      return this.$root.battleHand.map(idx => this.$root.battleDeck[idx]);
-    },
     getUsed: function() {
       return this.$root.battleUsed;
     },
+    getHandGroup: function() {
+      return this.$root.battleHand.map(idx => this.$root.battleDeck[idx]);
+    },
+    // getUsed: function() {
+    //   return this.$root.battleUsed;
+    // },
+    getUsedGroup: function() {
+      return this.$root.battleUsed.map(idx => this.$root.battleDeck[idx]);
+    },
     getDeckMax: function() {
       return DECK_MAX;
-    },
-    getQuestion: function() {
-      return this.$root.question;
     },
     getQuestionCharAt: function(index) {
       const char = this.$root.question[index] === 'x' ? '' : this.$root.question[index];
@@ -394,12 +397,28 @@ Vue.component('battle-input-section', {
       return this.$root.getGroupDisplayByKey(this.$root.battleDeck[this.$root.battleHand[this.currentPickGroup]]);
     },
     isSelected: function(index) {
-      if (this.$root.question[index] === 'x') {
+      for(var i=0; i<this.$root.questionModifiers.length; i++) {
+        if (index == this.$root.questionModifiers[i].index) {
+          return false;
+        }
+      }
+      const mQuestion = this.$root.getModifiedQuestion();
+      if (mQuestion[index] === 'x') {
         if (index === 0 && this.currentPickIndex === index) {
           return true;
         }
-        const match = this.$root.question.slice(0, index).match(/x/g);
-        return match && match.length === this.currentPickIndex;
+        const match = mQuestion.slice(0, index+1).match(/x/g);
+        return match && match.length === this.currentPickIndex + 1;
+      }
+      return false;
+    },
+    isPicked: function(index) {
+      if (this.$root.questionModifiers.length > 0) {
+        for(var i=0; i<this.$root.questionModifiers.length; i++) {
+          if (index == this.$root.questionModifiers[i].index) {
+            return true;
+          }
+        }
       }
       return false;
     },
@@ -412,7 +431,7 @@ Vue.component('battle-input-section', {
     },
     isStep2Completed: function() {
       const match = this.$root.question.match(/x/g);
-      return match && match.length <= USE_MAX;
+      return match && match.length === USE_MAX;
     },
     isStep3Completed: function() {
       return this.$root.battleHand.length === HAND_MAX;
@@ -434,19 +453,39 @@ Vue.component('battle-input-section', {
       this.$root.battleUsed = [];
       this.currentPickGroup = -1;
       this.currentPickIndex = -1;
+      this.$root.questionModifiers = [];
     },
     pickCharAtIndex: function(char, index) {
-      console.log(char, index);
+      this.$root.battleUsed.push(this.$root.battleHand[this.currentPickGroup]);
+      this.$root.battleHand.splice(this.currentPickGroup, 1);
+      this.$root.questionModifiers.push({
+        char: char,
+        index: index,
+        handIndex: this.currentPickGroup,
+        pickedIndex: this.currentPickIndex,
+      });
+
+      this.currentPickGroup = -1;
+      this.currentPickIndex = -1;
+    },
+    getUsedChar: function(index) {
+      for(var i=0; i<this.$root.questionModifiers.length; i++) {
+        if (index == this.$root.questionModifiers[i].index) {
+          return this.$root.questionModifiers[i].char;
+        }
+      }
+    },
+    updateQuestion: function(char, index) {
+      this.isDBRefreshed = false;
+      return this.$root.updateQuestion(char, index);
     },
     showComboResult: function() {
       const hand = this.$root.battleHand;
       const deck = this.$root.battleDeck;
       const used = this.$root.battleUsed;
       const groups = this.$root.groups;
-      const question = this.$root.question;
+      const question = this.$root.getModifiedQuestion();
       const remain = USE_MAX - used.length;
-
-      console.log('show', hand, deck, used);
 
       var fullHandCombo = [];
       var matches = hand.map(h => hand.reduce(function(resultObject, handGroup) {
@@ -469,7 +508,6 @@ Vue.component('battle-input-section', {
         }
         var cb = Utils.getCombinations(positions, remain - 1);
         cb = cb.map(c => {c.push(hand[i]); return c;});
-        console.log('cb length', positions, deck[hand[i]]);
         for (var cbIdx=0; cbIdx<cb.length; cbIdx++) {
           var choiceArr = cb[cbIdx];
           var pm = Utils.getPermutations(choiceArr);
@@ -531,7 +569,7 @@ Vue.component('battle-input-section', {
         sortedStats.push(tmpSort);
       }
 
-      console.log('finished', checkedCount, matches, fullHandCombo, stats);
+      console.log('finished', checkedCount);
       this.$root.displayComboResult(matches, sortedStats, fullHandCombo.sort(function(a, b){
         return b.count - a.count;
       }));
@@ -626,7 +664,7 @@ Vue.component('battle-input-section', {
               </tr>
               <tr>
                 <td v-for="index in [0,1,2,3,4,5,6]">
-                  <question-word-select :index="index"></question-word-select>
+                  <question-word-select :index="index" :updateQuestion="updateQuestion"></question-word-select>
                 </td>
               </tr>
             </tbody>
@@ -661,6 +699,9 @@ Vue.component('battle-input-section', {
                     <div v-if="isSelected(index)">
                       <place-word-dropdown :groups="getCurrentPickGroup()" :pickCharAtIndex="pickCharAtIndex" :index="index"></place-word-dropdown>
                     </div>
+                    <div v-else-if="isPicked(index)">
+                      {{ getUsedChar(index) }}
+                    </div>
                     <div v-else>
                       {{ getQuestionCharAt(index) }}
                     </div>
@@ -679,21 +720,21 @@ Vue.component('battle-input-section', {
               <div class="deckBigContainer ui segment">
                 <div class="ui top left attached label yellow mini">Deck</div>
                 <div class="deckContainer">
-                  <words-input class="small" v-for="(group, index) in getDeck()" :key="index" :group-key="group" :group="getGroupDisplayByKey(group)" v-on:click.native="pickToHandAtIndex(index)" :class="{disabled: getHand().indexOf(index) !== -1}"></words-input>
+                  <words-input class="small" v-for="(group, index) in getDeck()" :key="index" :group-key="group" :group="getGroupDisplayByKey(group)" v-on:click.native="pickToHandAtIndex(index)" :class="{disabled: getHand().indexOf(index) !== -1 || getUsed().indexOf(index) !== -1}"></words-input>
                 </div>
                 <div class="clearfix"></div>
               </div>
               <div class="usedBigContainer ui segment">
                 <div class="ui top left attached label mini">Used card</div>
                 <div class="usedContainer">
-                  <words-input class="small" v-for="(group, index) in getUsed()" :key="index" :group-key="group" :group="getGroupDisplayByKey(group)" v-on:click.native="throwAwayGroupAtIndex(index)"></words-input>
+                  <words-input class="small" v-for="(group, index) in getUsedGroup()" :key="index" :group-key="group" :group="getGroupDisplayByKey(group)"></words-input>
                 </div>
                 <div class="clearfix"></div>
               </div>
               <div class="clearfix"></div>
               <div>
                 <button class="ui left icon button floated" @click="reset">Reset</button>
-                <button class="ui right labeled icon button right floated green" :disabled="!isStep1Completed() || !isStep2Completed() || !isStep3Completed()" @click="showComboResult">
+                <button class="ui right labeled icon button right floated green" :disabled="!isStep1Completed() || !isStep2Completed() || !isStep3Completed() || !isDBRefreshed" @click="showComboResult">
                   Show me combo
                   <i class="right chevron icon"></i>
                 </button>
@@ -737,19 +778,17 @@ Vue.component('combo-result-display', {
       return this.$root.getGroupDisplayByKey(group);
     },
     getStatsBySubIndex: function(index, subIndex) {
-      return this.$root.battleMatchesStats[subIndex][index];
+      const st = this.$root.battleMatchesStats[subIndex][index] || {key: '', object: {}};
+      return st;
     },
     getQuestion: function() {
-      var question = this.$root.question;
+      var question = this.$root.getModifiedQuestion();
       var index = 1;
       do {
         question = question.replace('x', "(" + index + ")");
         index++;
       } while(question.indexOf('x') !== -1);
       return question;
-    },
-    getTotalMatched: function() {
-      return this.$root.$data.totalMatched;
     },
     getColumn: function() {
       const columns = [];
@@ -879,11 +918,11 @@ Vue.component('combo-result-display', {
           </td>
         </tr>
       </tbody>
-      <tfoot class="full-width">
+      <tfoot class="full-width" v-if="getColumn() > 0">
         <tr>
           <th colspan="4">
             <div v-if="pickedIndex === -1 || pickedSubIndex === -1">
-              Choose one result from the table
+              <h2>Choose one result from the table to see detail</h2>
             </div>
             <div v-if="pickedIndex !== -1 && pickedSubIndex !== -1">
               <div>
@@ -941,11 +980,11 @@ Vue.component('full-hand-result-display', {
             <div class="fluid">
               <div v-for="(combo, index) in getFullHandCombo()" class="comboRow fluid">
                 <div class="comboPlacement">
-                  <div class="ui label black">{{ index + 1 }}.</div>
-                  <div class="ui label" v-for="(part) in combo.placement">{{ part }}</div>
+                  <div class="ui label black mini">{{ index + 1 }}.</div>
+                  <div class="ui label mini" v-for="(part) in combo.placement">{{ part }}</div>
                 </div>
                 <div class="comboInfo">
-                  <a class="ui label teal" @click="showComboModal(combo.placement, combo.words)"><i class="eye icon"></i> Possible Combo <div class="detail">{{ combo.count }}</div></a>
+                  <a class="ui label teal mini" @click="showComboModal(combo.placement, combo.words)"><i class="eye icon"></i> Possible Combo <div class="detail">{{ combo.count }}</div></a>
                 </div>
                 <div class="clearfix"></div>
               </div>

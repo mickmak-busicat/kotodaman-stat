@@ -86,6 +86,7 @@ const AppConfig = {
     battleFullHandCombo: [],
     battleComboList: [],
     question: 'xxxxxxx',
+    questionModifiers: [],
   },
   created: function() {
     var _vm = this;
@@ -294,6 +295,11 @@ const AppConfig = {
       
       return result;
     },
+    getModifiedQuestion: function() {
+      return this.questionModifiers.reduce(function(newQ, modifier) {
+        return newQ.slice(0, modifier.index) + modifier.char + newQ.slice(modifier.index + 1, newQ.length);
+      }, this.question);
+    },
     pickGroup: function(group) {
       if (this.currentTab == 0) {
         // Stats mode
@@ -408,7 +414,7 @@ const AppConfig = {
       }
     },
     pickToHandAtIndex: function(index) {
-      if (this.battleHand.length < HAND_MAX && this.battleHand.indexOf(index) === -1) {
+      if (this.battleHand.length < HAND_MAX && this.battleHand.indexOf(index) === -1 && this.battleUsed.indexOf(index) === -1) {
         this.battleHand.push(index);
       }
     },
