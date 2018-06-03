@@ -3,6 +3,10 @@ const MAX_INPUT = 12;
 const DECK_MAX = 12;
 const HAND_MAX = 4;
 const USE_MAX = 4;
+const LS = {
+  BATTLE_DECK: 'battleDeck',
+};
+const DRAW_WEIGHT = [1, 0.375, 0.04, 0.003];
 const MATCH_TYPE_CONST = {
   MATCH: 'MATCH',
   APPEARS: 'APPEARS',
@@ -17,6 +21,41 @@ const MATCH_TYPE_EXAMPLE = {
   STARTS: 'わん ➡ わん○○○○○',
   ENDS: 'わん ➡ ○○○○○わん',
 }
+const Utils = {
+  getPermutations: function(inputArr) {
+    var results = [];
+    var permute = function(arr, memo) {
+      var cur, memo = memo || [];
+      for (var i = 0; i < arr.length; i++) {
+        cur = arr.splice(i, 1);
+        if (arr.length === 0) {
+          results.push(memo.concat(cur));
+        }
+        permute(arr.slice(), memo.concat(cur));
+        arr.splice(i, 0, cur[0]);
+      }
+      return results;
+    }
+    return permute(inputArr);
+  },
+  getCombinations: function(inputArr, exactLen) {
+    var fn = function(n, src, got, all) {
+      if (n == 0) {
+        if (got.length > 0) {
+          all[all.length] = got;
+        }
+        return;
+      }
+      for (var j = 0; j < src.length; j++) {
+        fn(n - 1, src.slice(j + 1), got.concat([src[j]]), all);
+      }
+      return;
+    }
+    var all = [];
+    fn(exactLen, inputArr, [], all);
+    return all;
+  },
+};
 const AppConfig = {
   el: '#app',
   delimiters: ['!((', '))'],
@@ -42,7 +81,9 @@ const AppConfig = {
     battleDeck: [],
     battleHand: [],
     battleUsed: [],
-    filteredDB: [],
+    battleMatches: [],
+    battleMatchesStats: [],
+    battleFullHandCombo: [],
     question: 'xxxxxxx',
   },
   created: function() {
@@ -59,6 +100,11 @@ const AppConfig = {
       this.groups[key].forEach(function(jpChar, index) {
         _vm.characterGroups[jpChar] = key;
       });
+    }
+
+    const cachedDeck = localStorage.getItem(LS.BATTLE_DECK);
+    if (cachedDeck !== null) {
+      this.battleDeck = cachedDeck.split(',');
     }
 
     this.resetCountResult();
@@ -376,6 +422,11 @@ const AppConfig = {
         char = 'x';
       }
       this.question = this.question.slice(0, index) + char + this.question.slice(index+1, this.question.length);
+    },
+    displayComboResult: function(matches, stats, fullHandCombo) {
+      this.battleMatches = matches;
+      this.battleMatchesStats = stats;
+      this.battleFullHandCombo = fullHandCombo;
     }
   },
 };

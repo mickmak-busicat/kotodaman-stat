@@ -96,6 +96,12 @@ layout: layout
         </div>
       </div>
 
+      <div class="ui stackable grid container">
+        <div id="combo-result">
+          <combo-result-display></combo-result-display>
+        </div>
+      </div>
+
       <modal v-if="showModal" @close="showModal = false">
         <h3 slot="header" v-cloak>!(( __t('appears-in-words-text') ))</h3>
       </modal>

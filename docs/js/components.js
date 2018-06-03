@@ -336,6 +336,12 @@ Vue.component('battle-input-section', {
     return {
       currentPickGroup: -1,
       currentPickIndex: -1,
+      minimumCombo: 6,
+      isDBRefreshed: false,
+
+      filteredDB: [],
+      fullHandCombo: [],
+      matches: [],
     }
   },
   methods: {
@@ -394,7 +400,11 @@ Vue.component('battle-input-section', {
       return false;
     },
     isStep1Completed: function() {
-      return this.getDeck().length == this.getDeckMax();
+      const isFullDeck = this.getDeck().length == this.getDeckMax();
+      if (!isFullDeck) {
+        this.isDBRefreshed = false;
+      }
+      return isFullDeck;
     },
     isStep2Completed: function() {
       const match = this.$root.question.match(/x/g);
@@ -403,11 +413,16 @@ Vue.component('battle-input-section', {
     isStep3Completed: function() {
       return this.$root.battleHand.length === HAND_MAX;
     },
-    goStep: function(index) {
-      $(this.$refs.stepAccordion).accordion('open', index-1);
+    completeStep: function(index) {
+      $(this.$refs.stepAccordion).accordion('open', index);
 
-      if (index === 2) {
+      if (index === 1) {
+        localStorage.setItem(LS.BATTLE_DECK, this.$root.battleDeck);
         this.$root.closeWordPanel();
+      } else if (index === 2) {
+        this.filteredDB = this.filterWords(this.$root.wordsDB, this.$root.question, this.$root.battleDeck);
+        console.log(this.$root.wordsDB.length, this.filteredDB.length);
+        this.isDBRefreshed = true;
       }
     },
     reset: function() {
@@ -420,8 +435,120 @@ Vue.component('battle-input-section', {
       console.log(char, index);
     },
     showComboResult: function() {
-      console.log('combo');
-    }
+      const hand = this.$root.battleHand;
+      const deck = this.$root.battleDeck;
+      const used = this.$root.battleUsed;
+      const groups = this.$root.groups;
+      const question = this.$root.question;
+      const remain = USE_MAX - used.length;
+
+      console.log('show', hand, deck, used);
+
+      var fullHandCombo = [];
+      var matches = hand.map(h => hand.reduce(function(resultObject, handGroup) {
+        resultObject[deck[handGroup]] = [];
+        return resultObject;
+      }, {}));
+      var stats = hand.map(h => hand.reduce(function(resultObject, handGroup) {
+        resultObject[deck[handGroup]] = {};
+        return resultObject;
+      }, {}));
+
+      var checkedCount = 0;
+      var combo = {};
+      for(var i=0; i<hand.length; i++) {
+        var positions = [0,1,2,3,4,5,6,7,8,9,10,11];
+        for(var j=0; j<=i; j++) {
+          var pos = positions.indexOf(hand[j]);
+          positions.splice(pos, 1);
+        }
+        var cb = Utils.getCombinations(positions, remain - 1);
+        cb = cb.map(c => {c.push(hand[i]); return c;});
+        console.log('cb length', positions, deck[hand[i]]);
+        for (var cbIdx=0; cbIdx<cb.length; cbIdx++) {
+          var choiceArr = cb[cbIdx];
+          var pm = Utils.getPermutations(choiceArr);
+          var usingGroups = choiceArr.map(c => deck[c]);
+          var sentenceDB = this.filterWords(this.filteredDB, question, usingGroups);
+          for (var pmIdx=0; pmIdx<pm.length; pmIdx++) {
+            var filledSentence = pm[pmIdx].reduce(function(fill, group) {
+              return fill.replace('x', '[' + groups[deck[group]].join('') + ']');
+            }, question.split('').join(','));
+            var filledParts = filledSentence.split(',');
+            combo = this.getCombo(sentenceDB, filledParts);
+            var comboScore = 0;
+            for (var k=0; k<hand.length; k++) {
+              var appearPos = pm[pmIdx].indexOf(hand[k]);
+              if (appearPos !== -1) {
+                comboScore ++;
+                matches[appearPos][deck[hand[k]]].push(combo);
+              }
+            }
+            combo.score = comboScore;
+            if (comboScore == remain) {
+              fullHandCombo.push(combo);
+            }
+            checkedCount ++;
+          }
+        }
+      }
+      for (var i=0; i<matches.length; i++) {
+        const keys = Object.keys(matches[i]);
+        for (var k=0; k<keys.length; k++) {
+          stats[i][keys[k]] = matches[i][keys[k]].reduce(function(sc, combo) {
+            const isHighCombo = combo.count >= 10;
+            const isMediumCombo = combo.count > 5 && combo.count < 10;
+            const isLowCombo = combo.count <= 5;
+            const comboWeight = Math.pow(1.61, combo.count);
+            sc.highCombo = sc.highCombo + (isHighCombo ? 1 : 0);
+            sc.mediumCombo = sc.mediumCombo + (isMediumCombo ? 1 : 0);
+            sc.lowCombo = sc.lowCombo + (isLowCombo ? 1 : 0);
+            sc.sumScore = sc.sumScore + (combo.count * comboWeight * DRAW_WEIGHT[remain - combo.score]);
+            return sc;
+          }, {
+            sumScore: 0,
+            highCombo: 0,
+            mediumCombo: 0,
+            lowCombo: 0,
+          });
+          stats[i][keys[k]].sumScore = stats[i][keys[k]].sumScore / 100;
+        }
+      }
+      console.log('finished', checkedCount, matches, fullHandCombo, stats);
+      this.$root.displayComboResult(matches, stats, fullHandCombo);
+    },
+    getCombo: function(filteredDB, filledParts) {
+      var result = [];
+      var count = 0;
+
+      for (var matchLength=2; matchLength<=filledParts.length; matchLength++) {
+        var index = 0;
+        do {
+          var pattern = '^' + filledParts.slice(index, index + matchLength).join('') + '$';
+          if (pattern.indexOf('[') !== -1) {
+            var matched = filteredDB.filter(w => w.length === matchLength && w.match(pattern) !== null);
+            if (matched.length > 0) {
+              result = result.concat(matched);
+              count ++;
+            }
+          }
+          index ++;
+        } while (index+matchLength <= filledParts.length);
+      }
+      return {
+        placemnet: filledParts,
+        words: result,
+        count: count,
+      };
+    },
+    filterWords: function(wordsDB, question, groupsArray) {
+      const groups = this.$root.groups;
+      const deckPattern = $.unique(groupsArray.slice()).reduce(function(result, group) {
+        return result = result + groups[group].join('');
+      }, '');
+      const antiPattern = '[^' + deckPattern + question + ']+';
+      return wordsDB.filter(w => w.match(antiPattern) === null);
+    },
   },
   template: `
     <div class="ui grid container" id="battle-section" v-show="getCurrentTab()==1">
@@ -429,7 +556,12 @@ Vue.component('battle-input-section', {
         <div class="active title">
           <i class="dropdown icon"></i>
           Step 1: Pick your deck from below
-          <span v-if="!isStep1Completed()">**</span>
+          <span v-if="!isStep1Completed()">
+            <i class="exclamation triangle icon yellow"></i>
+          </span>
+          <span v-else>
+            <i class="check circle icon blue"></i>
+          </span>
         </div>
         <div class="active content">
           <div class="ui grid">
@@ -441,7 +573,7 @@ Vue.component('battle-input-section', {
                 </div>
                 <div class="clearfix"></div>
                 <div>
-                  <button class="ui right labeled icon button right floated green" :disabled="!isStep1Completed()" @click="goStep(2)">
+                  <button class="ui right labeled icon button right floated green" :disabled="!isStep1Completed()" @click="completeStep(1)">
                     Next
                     <i class="right chevron icon"></i>
                   </button>
@@ -454,7 +586,12 @@ Vue.component('battle-input-section', {
         <div class="title">
           <i class="dropdown icon"></i>
           Step 2: Setup the question
-          <span v-if="!isStep2Completed()">**</span>
+          <span v-if="!isStep2Completed() || !isDBRefreshed">
+            <i class="exclamation triangle icon yellow"></i>
+          </span>
+          <span v-else>
+            <i class="check circle icon blue"></i>
+          </span>
         </div>
         <div class="content">
           <table class="ui celled striped table very compact">
@@ -476,7 +613,7 @@ Vue.component('battle-input-section', {
             </tbody>
           </table>
           <div>
-            <button class="ui right labeled icon button right floated green" :disabled="!isStep2Completed()" @click="goStep(3)">
+            <button class="ui right labeled icon button right floated green" :disabled="!isStep2Completed()" @click="completeStep(2)">
               Set Question
               <i class="right chevron icon"></i>
             </button>
@@ -486,7 +623,12 @@ Vue.component('battle-input-section', {
         <div class="title">
           <i class="dropdown icon"></i>
           Step 3: Select your hand card
-          <span v-if="!isStep3Completed()">**</span>
+          <span v-if="!isStep3Completed()">
+            <i class="exclamation triangle icon yellow"></i>
+          </span>
+          <span v-else>
+            <i class="check circle icon blue"></i>
+          </span>
         </div>
         <div class="content">
           <div class="ui segment">
@@ -544,4 +686,74 @@ Vue.component('battle-input-section', {
       </div>
     </div>
   `,
+});
+
+Vue.component('combo-result-display', {
+  props: ['result'],
+  methods: {
+    __t: function(key) {
+      return this.$root.__t(key);
+    },
+    getBattleStats: function() {
+      return this.$root.battleMatchesStats;
+    },
+    getBattleMatches: function() {
+      return this.$root.battleMatches;
+    },
+    getBattleFullHandCombo: function() {
+      return this.$root.battleFullHandCombo;
+    },
+    getGroupDisplayByKey: function(group) {
+      return this.$root.getGroupDisplayByKey(group);
+    },
+    getGroupKeyBySubIndex: function(index, subIndex) {
+      const keys = Object.keys(this.$root.battleMatchesStats[index]);
+      return keys[subIndex];
+    },
+    rankLabelClass: function (index) {
+      var classObject = {
+        ui: true,
+        circular: true,
+        label: true,
+        huge: true,
+      };
+      classObject[this.getRankColor(index)] = true;
+      return classObject;
+    },
+    getTotalMatched: function() {
+      return this.$root.$data.totalMatched;
+    },
+    openWordsModal: function(group, length) {
+      this.$root.openWordsModal(group, length);
+    },
+  },
+  template: `
+    <table class="ui compact striped fixed table">
+      <thead class="full-width">
+        <tr>
+          <th colspan="4"><center>Combo</center></th>
+        </tr>
+      </thead>
+      <thead class="full-width">
+        <tr align="center">
+          <th>1</th>
+          <th>2</th>
+          <th>3</th>
+          <th>4</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(groups, index) in getBattleStats()" :key="index">
+          <td v-for="(subIndex) in [0,1,2,3]">
+            <words-input :group-key="getGroupKeyBySubIndex(index, subIndex)" :group="getGroupDisplayByKey(getGroupKeyBySubIndex(index, subIndex))"></words-input>
+          </td>
+        </tr>
+      </tbody>
+      <tfoot class="full-width">
+        <tr>
+          <th colspan="4">
+          </th>
+        </tr>
+      </tfoot>
+    </table>`,
 });
