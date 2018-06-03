@@ -95,8 +95,10 @@ layout: layout
           <words-result-display :result="getSortedResult()"></words-result-display>
         </div>
       </div>
-
-      <div class="ui stackable grid container">
+      <div class="ui stackable grid container" v-if="currentTab==1">
+        <div id="full-hand-result">
+          <full-hand-result-display v-if="battleFullHandCombo.length > 0"></full-hand-result-display>
+        </div>
         <div id="combo-result">
           <combo-result-display></combo-result-display>
         </div>

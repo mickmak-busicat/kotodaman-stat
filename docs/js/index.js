@@ -84,6 +84,7 @@ const AppConfig = {
     battleMatches: [],
     battleMatchesStats: [],
     battleFullHandCombo: [],
+    battleComboList: [],
     question: 'xxxxxxx',
   },
   created: function() {
@@ -376,6 +377,13 @@ const AppConfig = {
         'event_category': 'WordsModalOpened',
         'group': group,
         'length': length,
+      });
+    },
+    openWordsModalAndFeedEntry: function(list) {
+      this.battleComboList = list;
+      this.showModal = true;
+      gtag('event', 'FeedResult', {
+        'event_category': 'WordsModalOpened',
       });
     },
 

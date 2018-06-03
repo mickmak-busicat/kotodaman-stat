@@ -383,3 +383,19 @@ box-shadow: 2px 2px 5px 0px rgba(0,0,0,0.75);
   overflow: visible!important;
   height: 70px;
 }
+
+.comboRow {
+  margin: 16px;
+}
+
+.comboPlacement{
+  float: left;
+  margin-right: 48px;
+}
+.comboInfo {
+  float: left;
+}
+
+.pickedCombo {
+  background-color: #efe;
+}

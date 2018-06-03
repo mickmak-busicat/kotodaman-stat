@@ -159,10 +159,14 @@ Vue.component('modal', {
       });
     },
     getResult: function() {
-      if( this.filteredByLength.length === 0) {
-        return this.filterWords();
+      if (this.$root.currentTab === 0) {
+        if( this.filteredByLength.length === 0) {
+          return this.filterWords();
+        }
+        return this.searchResult;
+      } else if (this.$root.currentTab === 1) {
+        return this.$root.battleComboList;
       }
-      return this.searchResult;
     }
   },
   data: function () {
@@ -449,6 +453,7 @@ Vue.component('battle-input-section', {
         resultObject[deck[handGroup]] = [];
         return resultObject;
       }, {}));
+      var sortedStats = [];
       var stats = hand.map(h => hand.reduce(function(resultObject, handGroup) {
         resultObject[deck[handGroup]] = {};
         return resultObject;
@@ -513,9 +518,23 @@ Vue.component('battle-input-section', {
           });
           stats[i][keys[k]].sumScore = stats[i][keys[k]].sumScore / 100;
         }
+        const tmpSort = [];
+        for (var k=0; k<keys.length; k++) {
+          tmpSort.push({
+            key: keys[k],
+            object: stats[i][keys[k]],
+          });
+        }
+        tmpSort.sort(function (a, b) {
+          return b.object.sumScore - a.object.sumScore;
+        });
+        sortedStats.push(tmpSort);
       }
+
       console.log('finished', checkedCount, matches, fullHandCombo, stats);
-      this.$root.displayComboResult(matches, stats, fullHandCombo);
+      this.$root.displayComboResult(matches, sortedStats, fullHandCombo.sort(function(a, b){
+        return b.count - a.count;
+      }));
     },
     getCombo: function(filteredDB, filledParts) {
       var result = [];
@@ -536,7 +555,7 @@ Vue.component('battle-input-section', {
         } while (index+matchLength <= filledParts.length);
       }
       return {
-        placemnet: filledParts,
+        placement: filledParts,
         words: result,
         count: count,
       };
@@ -690,6 +709,17 @@ Vue.component('battle-input-section', {
 
 Vue.component('combo-result-display', {
   props: ['result'],
+  data: function() {
+    return {
+      pickedIndex: -1,
+      pickedSubIndex: -1,
+      pickedCombo: [],
+      comboKey: '',
+      comboKeyColor: '',
+
+      byCombo: {},
+    };
+  },
   methods: {
     __t: function(key) {
       return this.$root.__t(key);
@@ -706,32 +736,128 @@ Vue.component('combo-result-display', {
     getGroupDisplayByKey: function(group) {
       return this.$root.getGroupDisplayByKey(group);
     },
-    getGroupKeyBySubIndex: function(index, subIndex) {
-      const keys = Object.keys(this.$root.battleMatchesStats[index]);
-      return keys[subIndex];
+    getStatsBySubIndex: function(index, subIndex) {
+      return this.$root.battleMatchesStats[subIndex][index];
     },
-    rankLabelClass: function (index) {
-      var classObject = {
-        ui: true,
-        circular: true,
-        label: true,
-        huge: true,
-      };
-      classObject[this.getRankColor(index)] = true;
-      return classObject;
+    getQuestion: function() {
+      var question = this.$root.question;
+      var index = 1;
+      do {
+        question = question.replace('x', "(" + index + ")");
+        index++;
+      } while(question.indexOf('x') !== -1);
+      return question;
     },
     getTotalMatched: function() {
       return this.$root.$data.totalMatched;
     },
-    openWordsModal: function(group, length) {
-      this.$root.openWordsModal(group, length);
+    getColumn: function() {
+      const columns = [];
+      const remain = USE_MAX - this.$root.battleUsed.length;
+      for(var i=0; i<remain; i++) {
+        columns.push(i);
+      }
+      return columns;
     },
+    pickResult: function(index, subIndex) {
+      const st = this.$root.battleMatches[subIndex][this.getStatsBySubIndex(index, subIndex).key];
+      const comboCount = {
+        '5': [],
+        '6': [],
+        '7': [],
+        '8': [],
+        '9': [],
+        '10': [],
+      };
+      const sortedCombo = {
+        '5': [],
+        '6': [],
+        '7': [],
+        '8': [],
+        '9': [],
+        '10': [],
+      };
+
+      for(var i=0; i<st.length; i++) {
+        if (st[i].count <= 5) {
+          comboCount['5'].push(st[i]);
+        } else if (st[i].count === 6) {
+          comboCount['6'].push(st[i]);
+        } else if (st[i].count === 7) {
+          comboCount['7'].push(st[i]);
+        } else if (st[i].count === 8) {
+          comboCount['8'].push(st[i]);
+        } else if (st[i].count === 9) {
+          comboCount['9'].push(st[i]);
+        } else if (st[i].count >= 10) {
+          comboCount['10'].push(st[i]);
+        }
+      }
+      sortedCombo['5'] = comboCount['5'].sort(function(a, b){
+        return ((b.count - a.count)* 10) + (b.score - a.score);
+      });
+      sortedCombo['6'] = comboCount['6'].sort(function(a, b){
+        return ((b.count - a.count)* 10) + (b.score - a.score);
+      });
+      sortedCombo['7'] = comboCount['7'].sort(function(a, b){
+        return ((b.count - a.count)* 10) + (b.score - a.score);
+      });
+      sortedCombo['8'] = comboCount['8'].sort(function(a, b){
+        return ((b.count - a.count)* 10) + (b.score - a.score);
+      });
+      sortedCombo['9'] = comboCount['9'].sort(function(a, b){
+        return ((b.count - a.count)* 10) + (b.score - a.score);
+      });
+      sortedCombo['10'] = comboCount['10'].sort(function(a, b){
+        return ((b.count - a.count)* 10) + (b.score - a.score);
+      });
+
+      this.pickedCombo = sortedCombo;
+      this.pickedIndex = index;
+      this.pickedSubIndex = subIndex;
+    },
+    showCombo: function(comboKey) {
+      switch(comboKey) {
+        case '10':
+          this.comboKeyColor = 'red';
+          break;
+        case '9':
+          this.comboKeyColor = 'orange';
+          break;
+        case '8':
+          this.comboKeyColor = 'yellow';
+          break;
+        case '7':
+          this.comboKeyColor = 'olive';
+          break;
+        case '6':
+          this.comboKeyColor = 'green';
+          break;
+        default:
+          this.comboKeyColor = 'grey';
+          break;
+      }
+      this.comboKey = comboKey;
+    },
+    showComboModal: function(combination, list) {
+      this.$root.openWordsModalAndFeedEntry([combination.join('')].concat(list));
+    },
+    isPartOnHand: function(part) {
+      if (part.indexOf('[') !== -1) {
+        const handChars = this.$root.battleHand.map(h => this.$root.groups[this.$root.battleDeck[h]]).join('');
+        return handChars.match(new RegExp(part)) !== null;
+      }
+      return false;
+    }
   },
   template: `
     <table class="ui compact striped fixed table">
       <thead class="full-width">
         <tr>
-          <th colspan="4"><center>Combo</center></th>
+          <th colspan="4">
+            <center>- More combo -<br/>
+            {{ getQuestion() }}</center>
+          </th>
         </tr>
       </thead>
       <thead class="full-width">
@@ -744,16 +870,89 @@ Vue.component('combo-result-display', {
       </thead>
       <tbody>
         <tr v-for="(groups, index) in getBattleStats()" :key="index">
-          <td v-for="(subIndex) in [0,1,2,3]">
-            <words-input :group-key="getGroupKeyBySubIndex(index, subIndex)" :group="getGroupDisplayByKey(getGroupKeyBySubIndex(index, subIndex))"></words-input>
+          <td v-for="(subIndex) in getColumn()" :class="{pickedCombo: index === pickedIndex && subIndex === pickedSubIndex}">
+            <words-input :group-key="getStatsBySubIndex(index, subIndex).key" :group="getGroupDisplayByKey(getStatsBySubIndex(index, subIndex).key)" v-on:click.native="pickResult(index, subIndex)"></words-input>
+            <div class="ui label teal">Score <div class="detail">{{ Math.round(getStatsBySubIndex(index, subIndex).object.sumScore) }}</div></div>
+            <div class="ui label">High Combo <div class="detail">{{ getStatsBySubIndex(index, subIndex).object.highCombo }}</div></div>
+            <div class="ui label">Medium Combo <div class="detail">{{ getStatsBySubIndex(index, subIndex).object.mediumCombo }}</div></div>
+            <div class="ui label">Low Combo <div class="detail">{{ getStatsBySubIndex(index, subIndex).object.lowCombo }}</div></div>
           </td>
         </tr>
       </tbody>
       <tfoot class="full-width">
         <tr>
           <th colspan="4">
+            <div v-if="pickedIndex === -1 || pickedSubIndex === -1">
+              Choose one result from the table
+            </div>
+            <div v-if="pickedIndex !== -1 && pickedSubIndex !== -1">
+              <div>
+                <words-input class="small" :group-key="getStatsBySubIndex(pickedIndex, pickedSubIndex).key" :group="getGroupDisplayByKey(getStatsBySubIndex(pickedIndex, pickedSubIndex).key)"></words-input>
+                <a class="ui label red" @click="showCombo('10')">10+ Combo Choice<div class="detail">{{ pickedCombo['10'].length }}</div></a>
+                <a class="ui label orange" @click="showCombo('9')">9 Combo Choice<div class="detail">{{ pickedCombo['9'].length }}</div></a>
+                <a class="ui label yellow" @click="showCombo('8')">8 Combo Choice<div class="detail">{{ pickedCombo['8'].length }}</div></a>
+                <a class="ui label olive" @click="showCombo('7')">7 Combo Choice<div class="detail">{{ pickedCombo['7'].length }}</div></a>
+                <a class="ui label green" @click="showCombo('6')">6 Combo Choice<div class="detail">{{ pickedCombo['6'].length }}</div></a>
+                <a class="ui label" @click="showCombo('5')">5- Combo Choice <div class="detail">{{ pickedCombo['5'].length }}</div></a>
+              </div>
+              <div class="clearfix"></div>
+              <div class="fluid">
+                <div v-for="(combo, index) in pickedCombo[comboKey]" class="comboRow fluid">
+                  <div class="comboPlacement">
+                    <div class="ui label black">{{ index + 1 }}.</div>
+                    <div class="ui label" v-for="(part) in combo.placement" :class="{green: isPartOnHand(part)}">{{ part }}</div>
+                  </div>
+                  <div class="comboInfo">
+                    <a class="ui label" :class="comboKeyColor" @click="showComboModal(combo.placement, combo.words)"><i class="eye icon"></i> Potential Combo <div class="detail">{{ combo.count }}</div></a>
+                    <div class="ui label violet">Already on hand <div class="detail">{{ combo.score }}</div></div>
+                  </div>
+                  <div class="clearfix"></div>
+                </div>
+              </div>
+            </div>
           </th>
         </tr>
       </tfoot>
     </table>`,
+});
+
+Vue.component('full-hand-result-display', {
+  methods: {
+    __t: function(key) {
+      return this.$root.__t(key);
+    },
+    getFullHandCombo: function() {
+      return this.$root.battleFullHandCombo;
+    },
+    showComboModal: function(combination, list) {
+      this.$root.openWordsModalAndFeedEntry([combination.join('')].concat(list));
+    },
+  },
+  template: `
+    <table class="ui compact striped fixed table">
+      <thead class="full-width">
+        <tr>
+          <th><center>Combinations take all of your current hand cards</center></th>
+        </tr>
+      </thead>
+      <tbody class="full-width">
+        <tr>
+          <td>
+            <div class="fluid">
+              <div v-for="(combo, index) in getFullHandCombo()" class="comboRow fluid">
+                <div class="comboPlacement">
+                  <div class="ui label black">{{ index + 1 }}.</div>
+                  <div class="ui label" v-for="(part) in combo.placement">{{ part }}</div>
+                </div>
+                <div class="comboInfo">
+                  <a class="ui label teal" @click="showComboModal(combo.placement, combo.words)"><i class="eye icon"></i> Possible Combo <div class="detail">{{ combo.count }}</div></a>
+                </div>
+                <div class="clearfix"></div>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  `,
 });
