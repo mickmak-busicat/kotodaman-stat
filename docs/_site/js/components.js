@@ -305,9 +305,6 @@ Vue.component('question-word-select', {
           return 1;
         }));
     },
-    // updateQuestion: function(charindex) {
-    //   return this.$root.updateQuestion(this.char, index);
-    // }
   },
   template: `
     <select class="ui dropdown compact" v-model="char" @change="updateQuestion(char, index)">
@@ -332,6 +329,28 @@ Vue.component('place-word-dropdown', {
     </div>
   `,
 });
+Vue.component('load-deck-dropdown', {
+  mounted: function() {
+    $(this.$el).dropdown();
+  },
+  methods: {
+    getCachedDecks: function() {
+      return this.$root.cachedDecks;
+    },
+    changeDeck: function(deck) {
+      this.$root.battleDeck = JSON.parse(deck);
+    }
+  },
+  template: `
+    <div class="ui selection dropdown">
+      <i class="dropdown icon"></i>
+      <div class="default text">Load deck...</div>
+      <div class="menu">
+        <div class="item" v-for="(deck, index) in getCachedDecks()" @click="changeDeck(deck)">Deck {{ index+1 }}</div>
+      </div>
+    </div>
+  `,
+})
 Vue.component('battle-input-section', {
   mounted: function() {
     $(this.$refs.stepAccordion).accordion();
@@ -440,13 +459,16 @@ Vue.component('battle-input-section', {
       $(this.$refs.stepAccordion).accordion('open', index);
 
       if (index === 1) {
-        localStorage.setItem(LS.BATTLE_DECK, this.$root.battleDeck);
         this.$root.closeWordPanel();
       } else if (index === 2) {
         this.filteredDB = this.filterWords(this.$root.wordsDB, this.$root.question, this.$root.battleDeck);
         console.log(this.$root.wordsDB.length, this.filteredDB.length);
         this.isDBRefreshed = true;
       }
+    },
+    saveDeck: function() {
+      this.$root.cachedDecks.push(JSON.stringify(this.$root.battleDeck));
+      localStorage.setItem(LS.BATTLE_DECK, JSON.stringify(this.$root.cachedDecks));
     },
     reset: function() {
       this.$root.battleHand = [];
@@ -633,6 +655,10 @@ Vue.component('battle-input-section', {
                   <button class="ui right labeled icon button right floated green" :disabled="!isStep1Completed()" @click="completeStep(1)">
                     Next
                     <i class="right chevron icon"></i>
+                  </button>
+                  <load-deck-dropdown></load-deck-dropdown>
+                  <button class="ui button teal" :disabled="!isStep1Completed()" @click="saveDeck()">
+                    Save this deck
                   </button>
                 </div>
                 <div class="clearfix"></div>
@@ -918,11 +944,11 @@ Vue.component('combo-result-display', {
           </td>
         </tr>
       </tbody>
-      <tfoot class="full-width" v-if="getColumn() > 0">
+      <tfoot class="full-width" v-if="getColumn().length > 0">
         <tr>
           <th colspan="4">
             <div v-if="pickedIndex === -1 || pickedSubIndex === -1">
-              <h2>Choose one result from the table to see detail</h2>
+              <h2>Choose any word from above table to see detail</h2>
             </div>
             <div v-if="pickedIndex !== -1 && pickedSubIndex !== -1">
               <div>

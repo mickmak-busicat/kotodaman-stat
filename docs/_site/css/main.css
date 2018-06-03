@@ -29,6 +29,7 @@ body {
   text-align: center;
   color: #fff;
   margin: 8px;
+  line-height: 1;
 
   cursor: pointer;
   float: left;

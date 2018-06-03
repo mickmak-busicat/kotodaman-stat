@@ -66,6 +66,7 @@ const AppConfig = {
     showModal: false,
     missingWord: '',
     language: 'jp',
+    cachedDecks: [],
 
     pickedGroups: [],
     searchMethod: MATCH_TYPE_CONST.CONSECUTIVE,
@@ -105,8 +106,10 @@ const AppConfig = {
     }
 
     const cachedDeck = localStorage.getItem(LS.BATTLE_DECK);
-    if (cachedDeck !== null) {
-      this.battleDeck = cachedDeck.split(',');
+    if (cachedDeck !== null && cachedDeck !== '') {
+      const decks = JSON.parse(cachedDeck);
+      this.battleDeck = JSON.parse(decks[0]);
+      this.cachedDecks = decks;
     }
 
     this.resetCountResult();
