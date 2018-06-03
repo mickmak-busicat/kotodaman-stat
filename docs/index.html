@@ -32,8 +32,8 @@ layout: layout
       <div class="ui raised padded text container segment" id="header-section">
         <center><h2>コトダマン<span v-cloak>｜!(( __t('header') ))</span></h2></center>
         <div class="ui secondary pointing menu">
-          <a class="item" :class="{ active: currentTab==0 }" @click="switchTab(0)">Word Stats</a>
-          <a class="item" :class="{ active: currentTab==1 }" @click="switchTab(1)">Battle Simulator</a>
+          <a class="item" :class="{ active: currentTab==0 }" @click="switchTab(0)"><span v-cloak>!(( __t('tab.stats-tab') ))</span></a>
+          <a class="item" :class="{ active: currentTab==1 }" @click="switchTab(1)"><span v-cloak>!(( __t('tab.battle-tab') ))</span></a>
         </div>
         <div class="ui grid container" id="input-section" v-show="currentTab==0" key="stats">
           <div class="ten wide computer eight wide tablet sixteen wide mobile column">

@@ -29,7 +29,6 @@ body {
   text-align: center;
   color: #fff;
   margin: 8px;
-  line-height: 1;
 
   cursor: pointer;
   float: left;
@@ -173,6 +172,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ff7575', end
   height: 48px;
   border-radius: 50%;
   display: table;
+  line-height: 1;
 
   -webkit-touch-callout: none; /* iOS Safari */
   -webkit-user-select: none; /* Safari */
@@ -398,5 +398,5 @@ box-shadow: 2px 2px 5px 0px rgba(0,0,0,0.75);
 }
 
 .pickedCombo {
-  background-color: #efe;
+  background-color: #cfc;
 }

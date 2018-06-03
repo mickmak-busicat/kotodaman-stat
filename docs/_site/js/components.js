@@ -334,6 +334,9 @@ Vue.component('load-deck-dropdown', {
     $(this.$el).dropdown();
   },
   methods: {
+    __t: function(key) {
+      return this.$root.__t(key);
+    },
     getCachedDecks: function() {
       return this.$root.cachedDecks;
     },
@@ -344,9 +347,9 @@ Vue.component('load-deck-dropdown', {
   template: `
     <div class="ui selection dropdown">
       <i class="dropdown icon"></i>
-      <div class="default text">Load deck...</div>
+      <div class="default text">{{ __t('battle.load-deck-text') }}</div>
       <div class="menu">
-        <div class="item" v-for="(deck, index) in getCachedDecks()" @click="changeDeck(deck)">Deck {{ index+1 }}</div>
+        <div class="item" v-for="(deck, index) in getCachedDecks()" @click="changeDeck(deck)">{{ __t('battle.deck-text') }} {{ index+1 }}</div>
       </div>
     </div>
   `,
@@ -634,7 +637,7 @@ Vue.component('battle-input-section', {
       <div class="ui fluid accordion" ref="stepAccordion">
         <div class="active title">
           <i class="dropdown icon"></i>
-          Step 1: Pick your deck from below
+          {{ __t('battle.step1-text') }}
           <span v-if="!isStep1Completed()">
             <i class="exclamation triangle icon yellow"></i>
           </span>
@@ -646,19 +649,19 @@ Vue.component('battle-input-section', {
           <div class="ui grid">
             <div class="column">
               <div class="ui raised segment">
-                <div class="ui top left attached label yellow">Deck</div>
+                <div class="ui top left attached label yellow">{{ __t('battle.deck-text') }}</div>
                 <div class="step1DeckContainer">
                   <words-input v-for="(group, index) in getDeck()" :key="index" :group-key="group" :group="getGroupDisplayByKey(group)" v-on:click.native="throwAwayGroupAtIndex(index)"></words-input>
                 </div>
                 <div class="clearfix"></div>
                 <div>
                   <button class="ui right labeled icon button right floated green" :disabled="!isStep1Completed()" @click="completeStep(1)">
-                    Next
+                    {{ __t('battle.next-text') }}
                     <i class="right chevron icon"></i>
                   </button>
                   <load-deck-dropdown></load-deck-dropdown>
                   <button class="ui button teal" :disabled="!isStep1Completed()" @click="saveDeck()">
-                    Save this deck
+                    {{ __t('battle.save-deck-text') }}
                   </button>
                 </div>
                 <div class="clearfix"></div>
@@ -668,7 +671,7 @@ Vue.component('battle-input-section', {
         </div>
         <div class="title">
           <i class="dropdown icon"></i>
-          Step 2: Setup the question
+          {{ __t('battle.step2-text') }}
           <span v-if="!isStep2Completed() || !isDBRefreshed">
             <i class="exclamation triangle icon yellow"></i>
           </span>
@@ -680,7 +683,7 @@ Vue.component('battle-input-section', {
           <table class="ui celled striped table very compact">
             <thead>
               <tr><th colspan="7">
-                Setup Question
+                {{ __t('battle.setup-question-text') }}
               </th>
             </tr>
             </thead>
@@ -697,7 +700,7 @@ Vue.component('battle-input-section', {
           </table>
           <div>
             <button class="ui right labeled icon button right floated green" :disabled="!isStep2Completed()" @click="completeStep(2)">
-              Set Question
+              {{ __t('battle.set-question-text') }}
               <i class="right chevron icon"></i>
             </button>
           </div>
@@ -705,7 +708,7 @@ Vue.component('battle-input-section', {
         </div>
         <div class="title">
           <i class="dropdown icon"></i>
-          Step 3: Select your hand card
+          {{ __t('battle.step3-text') }}
           <span v-if="!isStep3Completed()">
             <i class="exclamation triangle icon yellow"></i>
           </span>
@@ -737,21 +740,21 @@ Vue.component('battle-input-section', {
             </table>
             <div class="allCardContainer">
               <div class="handBigContainer ui raised segment">
-                <div class="ui top left attached label green mini">Hand card</div>
+                <div class="ui top left attached label green mini">{{ __t('battle.hand-text') }}</div>
                 <div class="handContainer">
                   <words-input class="small" v-for="(group, index) in getHandGroup()" :key="index" :group-key="group" :group="getGroupDisplayByKey(group)" v-on:click.native="pickHandCard(index)"></words-input>
                 </div>
                 <div class="clearfix"></div>
               </div>
               <div class="deckBigContainer ui segment">
-                <div class="ui top left attached label yellow mini">Deck</div>
+                <div class="ui top left attached label yellow mini">{{ __t('battle.deck-text') }}</div>
                 <div class="deckContainer">
                   <words-input class="small" v-for="(group, index) in getDeck()" :key="index" :group-key="group" :group="getGroupDisplayByKey(group)" v-on:click.native="pickToHandAtIndex(index)" :class="{disabled: getHand().indexOf(index) !== -1 || getUsed().indexOf(index) !== -1}"></words-input>
                 </div>
                 <div class="clearfix"></div>
               </div>
               <div class="usedBigContainer ui segment">
-                <div class="ui top left attached label mini">Used card</div>
+                <div class="ui top left attached label mini">{{ __t('battle.used-text') }}</div>
                 <div class="usedContainer">
                   <words-input class="small" v-for="(group, index) in getUsedGroup()" :key="index" :group-key="group" :group="getGroupDisplayByKey(group)"></words-input>
                 </div>
@@ -759,9 +762,9 @@ Vue.component('battle-input-section', {
               </div>
               <div class="clearfix"></div>
               <div>
-                <button class="ui left icon button floated" @click="reset">Reset</button>
+                <button class="ui left icon button floated" @click="reset">{{ __t('battle.reset-text') }}</button>
                 <button class="ui right labeled icon button right floated green" :disabled="!isStep1Completed() || !isStep2Completed() || !isStep3Completed() || !isDBRefreshed" @click="showComboResult">
-                  Show me combo
+                  {{ __t('battle.show-combo-text') }}
                   <i class="right chevron icon"></i>
                 </button>
               </div>
@@ -920,7 +923,7 @@ Vue.component('combo-result-display', {
       <thead class="full-width">
         <tr>
           <th colspan="4">
-            <center>- More combo -<br/>
+            <center>{{ __t('battle.result.more-combo-text') }}<br/>
             {{ getQuestion() }}</center>
           </th>
         </tr>
@@ -937,10 +940,10 @@ Vue.component('combo-result-display', {
         <tr v-for="(groups, index) in getBattleStats()" :key="index">
           <td v-for="(subIndex) in getColumn()" :class="{pickedCombo: index === pickedIndex && subIndex === pickedSubIndex}">
             <words-input :group-key="getStatsBySubIndex(index, subIndex).key" :group="getGroupDisplayByKey(getStatsBySubIndex(index, subIndex).key)" v-on:click.native="pickResult(index, subIndex)"></words-input>
-            <div class="ui label teal">Score <div class="detail">{{ Math.round(getStatsBySubIndex(index, subIndex).object.sumScore) }}</div></div>
-            <div class="ui label">High Combo <div class="detail">{{ getStatsBySubIndex(index, subIndex).object.highCombo }}</div></div>
-            <div class="ui label">Medium Combo <div class="detail">{{ getStatsBySubIndex(index, subIndex).object.mediumCombo }}</div></div>
-            <div class="ui label">Low Combo <div class="detail">{{ getStatsBySubIndex(index, subIndex).object.lowCombo }}</div></div>
+            <div class="ui label teal">{{ __t('battle.result.score-text') }} <div class="detail">{{ Math.round(getStatsBySubIndex(index, subIndex).object.sumScore) }}</div></div>
+            <div class="ui label">{{ __t('battle.result.high-combo-text') }} <div class="detail">{{ getStatsBySubIndex(index, subIndex).object.highCombo }}</div></div>
+            <div class="ui label">{{ __t('battle.result.medium-combo-text') }} <div class="detail">{{ getStatsBySubIndex(index, subIndex).object.mediumCombo }}</div></div>
+            <div class="ui label">{{ __t('battle.result.low-combo-text') }} <div class="detail">{{ getStatsBySubIndex(index, subIndex).object.lowCombo }}</div></div>
           </td>
         </tr>
       </tbody>
@@ -948,17 +951,17 @@ Vue.component('combo-result-display', {
         <tr>
           <th colspan="4">
             <div v-if="pickedIndex === -1 || pickedSubIndex === -1">
-              <h2>Choose any word from above table to see detail</h2>
+              <h2>{{ __t('battle.result.choose-detail-text') }}</h2>
             </div>
             <div v-if="pickedIndex !== -1 && pickedSubIndex !== -1">
               <div>
                 <words-input class="small" :group-key="getStatsBySubIndex(pickedIndex, pickedSubIndex).key" :group="getGroupDisplayByKey(getStatsBySubIndex(pickedIndex, pickedSubIndex).key)"></words-input>
-                <a class="ui label red" @click="showCombo('10')">10+ Combo Choice<div class="detail">{{ pickedCombo['10'].length }}</div></a>
-                <a class="ui label orange" @click="showCombo('9')">9 Combo Choice<div class="detail">{{ pickedCombo['9'].length }}</div></a>
-                <a class="ui label yellow" @click="showCombo('8')">8 Combo Choice<div class="detail">{{ pickedCombo['8'].length }}</div></a>
-                <a class="ui label olive" @click="showCombo('7')">7 Combo Choice<div class="detail">{{ pickedCombo['7'].length }}</div></a>
-                <a class="ui label green" @click="showCombo('6')">6 Combo Choice<div class="detail">{{ pickedCombo['6'].length }}</div></a>
-                <a class="ui label" @click="showCombo('5')">5- Combo Choice <div class="detail">{{ pickedCombo['5'].length }}</div></a>
+                <a class="ui label red" @click="showCombo('10')">10+ {{__t('battle.result.combo-choice-text')}}<div class="detail">{{ pickedCombo['10'].length }}</div></a>
+                <a class="ui label orange" @click="showCombo('9')">9 {{__t('battle.result.combo-choice-text')}}<div class="detail">{{ pickedCombo['9'].length }}</div></a>
+                <a class="ui label yellow" @click="showCombo('8')">8 {{__t('battle.result.combo-choice-text')}}<div class="detail">{{ pickedCombo['8'].length }}</div></a>
+                <a class="ui label olive" @click="showCombo('7')">7 {{__t('battle.result.combo-choice-text')}}<div class="detail">{{ pickedCombo['7'].length }}</div></a>
+                <a class="ui label green" @click="showCombo('6')">6 {{__t('battle.result.combo-choice-text')}}<div class="detail">{{ pickedCombo['6'].length }}</div></a>
+                <a class="ui label" @click="showCombo('5')">5> {{__t('battle.result.combo-choice-text')}}<div class="detail">{{ pickedCombo['5'].length }}</div></a>
               </div>
               <div class="clearfix"></div>
               <div class="fluid">
@@ -968,8 +971,8 @@ Vue.component('combo-result-display', {
                     <div class="ui label" v-for="(part) in combo.placement" :class="{green: isPartOnHand(part)}">{{ part }}</div>
                   </div>
                   <div class="comboInfo">
-                    <a class="ui label" :class="comboKeyColor" @click="showComboModal(combo.placement, combo.words)"><i class="eye icon"></i> Potential Combo <div class="detail">{{ combo.count }}</div></a>
-                    <div class="ui label violet">Already on hand <div class="detail">{{ combo.score }}</div></div>
+                    <a class="ui label" :class="comboKeyColor" @click="showComboModal(combo.placement, combo.words)"><i class="eye icon"></i> {{ __t('battle.result.possible-combo') }} <div class="detail">{{ combo.count }}</div></a>
+                    <div class="ui label violet">{{ __t('battle.result.already-text') }} <div class="detail">{{ combo.score }}</div></div>
                   </div>
                   <div class="clearfix"></div>
                 </div>
@@ -997,7 +1000,7 @@ Vue.component('full-hand-result-display', {
     <table class="ui compact striped fixed table">
       <thead class="full-width">
         <tr>
-          <th><center>Combinations take all of your current hand cards</center></th>
+          <th><center>{{ __t('battle.result.full-hand-text') }}</center></th>
         </tr>
       </thead>
       <tbody class="full-width">
@@ -1010,7 +1013,7 @@ Vue.component('full-hand-result-display', {
                   <div class="ui label mini" v-for="(part) in combo.placement">{{ part }}</div>
                 </div>
                 <div class="comboInfo">
-                  <a class="ui label teal mini" @click="showComboModal(combo.placement, combo.words)"><i class="eye icon"></i> Possible Combo <div class="detail">{{ combo.count }}</div></a>
+                  <a class="ui label teal mini" @click="showComboModal(combo.placement, combo.words)"><i class="eye icon"></i> {{ __t('battle.result.possible-combo') }} <div class="detail">{{ combo.count }}</div></a>
                 </div>
                 <div class="clearfix"></div>
               </div>
