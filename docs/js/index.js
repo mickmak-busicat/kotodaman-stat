@@ -1,5 +1,8 @@
 const CROSSOUT = 'X';
 const MAX_INPUT = 12;
+const DECK_MAX = 12;
+const HAND_MAX = 4;
+const USE_MAX = 4;
 const MATCH_TYPE_CONST = {
   MATCH: 'MATCH',
   APPEARS: 'APPEARS',
@@ -40,6 +43,7 @@ const AppConfig = {
     battleHand: [],
     battleUsed: [],
     filteredDB: [],
+    question: 'xxxxxxx',
   },
   created: function() {
     var _vm = this;
@@ -85,9 +89,12 @@ const AppConfig = {
       gtag('event', 'Filter', {
         'event_category': 'ApplyFilterClicked',
       });
+      this.closeWordPanel();
+      this.showCountByWords();
+    },
+    closeWordPanel: function() {
       this.$refs.wordPanel.close();
       this.$emit('wordSelectClose');
-      this.showCountByWords();
     },
     submitMissingWords: function() {
       var word = this.missingWord;
@@ -258,15 +265,31 @@ const AppConfig = {
         });
       } else if (this.currentTab == 1){
         // Battle mode
+        if (this.battleDeck.length < DECK_MAX) {
+          this.battleDeck.push(group);
+        }
+
+        gtag('event', 'Deck', {
+          'event_category': 'DeckWordPicked',
+          'group': group,
+        });
       }
       
     },
     throwAwayGroupAtIndex: function(index) {
-      gtag('event', 'Filter', {
-        'event_category': 'WordUnpicked',
-        'group': this.pickedGroups[index],
-      });
-      this.pickedGroups.splice(index, 1);
+      if (this.currentTab == 0) {
+        gtag('event', 'Filter', {
+          'event_category': 'WordUnpicked',
+          'group': this.pickedGroups[index],
+        });
+        this.pickedGroups.splice(index, 1);
+      } else if (this.currentTab == 1) {
+        gtag('event', 'Deck', {
+          'event_category': 'DeckWordUnpicked',
+          'group': this.battleDeck[index],
+        });
+        this.battleDeck.splice(index, 1);
+      }
     },
     resetFilter: function() {
       this.pickedGroups = [];
@@ -330,6 +353,11 @@ const AppConfig = {
         )
       }
     },
+    pickToHandAtIndex: function(index) {
+      if (this.battleHand.length < HAND_MAX && this.battleHand.indexOf(index) === -1) {
+        this.battleHand.push(index);
+      }
+    },
     scrollToTop: function() {
       var body = $("html, body");
       body.stop().animate({scrollTop:0}, 200, 'swing');
@@ -342,11 +370,12 @@ const AppConfig = {
     },
     switchTab: function(tab) {
       this.currentTab = tab;
-    }
-  },
-  events: {
-    'fade-done': function () {
-      console.log('fade done');
+    },
+    updateQuestion: function(char, index) {
+      if (char === 'O') {
+        char = 'x';
+      }
+      this.question = this.question.slice(0, index) + char + this.question.slice(index+1, this.question.length);
     }
   },
 };

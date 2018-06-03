@@ -20,6 +20,10 @@ body {
   clear: both;
 }
 
+.monji.disabled {
+  opacity: 0.3;
+}
+
 .monji {
   width: 48px;
   text-align: center;
@@ -197,6 +201,26 @@ box-shadow: 2px 2px 5px 0px rgba(0,0,0,0.75);
   margin-bottom: 4px;
 }
 
+.monji.small {
+  width: 32px;
+}
+
+.monji.small .big-text {
+  width: 32px;
+  height: 32px;
+  font-size: 10px;
+}
+
+.monji.small .big-text div{
+  font-size: 14px;
+  -webkit-text-stroke: 1px #333;
+}
+
+.monji.small .forms {
+  font-size: 8px;
+  border-radius: 4px;
+}
+
 
 .match-words {
   width: 100px;
@@ -311,4 +335,51 @@ box-shadow: 2px 2px 5px 0px rgba(0,0,0,0.75);
 }
 .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
   opacity: 0;
+}
+
+.step1DeckContainer {
+  width: 270px;
+  height: 270px;
+  margin: auto;
+}
+.deckBigContainer {
+  float: left;
+}
+.deckContainer {
+  width: 200px;
+  height: 200px;
+  margin: auto;
+}
+
+.handBigContainer {
+  float: left;
+  margin-top: 1rem!important;
+  margin-right: 1rem!important;
+}
+
+.handContainer {
+  height: 270px;
+  width: 50px;
+  margin: auto;
+}
+
+.usedBigContainer {
+  float: left;
+  margin-left: 1rem!important;
+}
+
+.usedContainer {
+  height: 270px;
+  width: 50px;
+  margin: auto;
+}
+
+.allCardContainer {
+  margin: auto;
+  width: 420px;
+}
+
+.overflowCell {
+  overflow: visible!important;
+  height: 70px;
 }
