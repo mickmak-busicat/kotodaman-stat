@@ -4,8 +4,7 @@ https://mickmak-busicat.github.io/kotodaman-stat/
 ### Contribute on dataset
 Dataset is not complete. Feel free to request adding complete words list.
 - Current dataset:
-  - Validated word count: *3594* (Confirmed available in game)
-  - Total: *302042*
+  - Total: *150715*
 - Feel free to add new word using the input in the web.
 - Feel free to report any unavailable words in the web.
 
