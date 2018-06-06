@@ -841,13 +841,13 @@ Vue.component('combo-result-display', {
       return st;
     },
     getQuestion: function() {
-      var question = this.$root.getModifiedQuestion();
+      var question = this.$root.getModifiedQuestion().split('').join(',');
       var index = 1;
       do {
         question = question.replace('x', "(" + index + ")");
         index++;
       } while(question.indexOf('x') !== -1);
-      return question;
+      return question.split(',');
     },
     getColumn: function() {
       const columns = [];
@@ -953,8 +953,10 @@ Vue.component('combo-result-display', {
       <thead class="full-width">
         <tr>
           <th colspan="4">
-            <center>{{ __t('battle.result.more-combo-text') }}<br/>
-            {{ getQuestion() }}</center>
+            <center>
+              {{ __t('battle.result.more-combo-text') }}<br/>
+              <div class="ui label small" v-for="(char, index) in getQuestion()" :class="{green: char.indexOf(pickedSubIndex+1)!==-1}">{{ char }}</div>
+            </center>
           </th>
         </tr>
       </thead>
