@@ -307,8 +307,8 @@ Vue.component('question-word-select', {
     },
   },
   template: `
-    <select class="ui dropdown compact" v-model="char" @change="updateQuestion(char, index)">
-      <option :value="char.key" v-for="(char, index) in getAllWords()">{{ char.text }}</option>
+    <select class="ui dropdown compact question-select" v-model="char" @change="updateQuestion(char, index)">
+      <option :value="char.key" v-for="(char, wordIndex) in getAllWords()">{{ char.text }}</option>
     </select>
   `,
 });
@@ -480,6 +480,15 @@ Vue.component('battle-input-section', {
       this.currentPickIndex = -1;
       this.$root.questionModifiers = [];
     },
+    resetQuestion: function() {
+      this.$root.question = 'xxxxxxx';
+      this.$root.questionModifiers = [];
+      this.$root.battleUsed = [];
+      this.currentPickGroup = -1;
+      this.currentPickIndex = -1;
+
+      $('select.question-select').val('-');
+    },
     pickCharAtIndex: function(char, index) {
       this.$root.battleUsed.push(this.$root.battleHand[this.currentPickGroup]);
       this.$root.battleHand.splice(this.currentPickGroup, 1);
@@ -492,6 +501,10 @@ Vue.component('battle-input-section', {
 
       this.currentPickGroup = -1;
       this.currentPickIndex = -1;
+    },
+    unpickUsedIndex: function(useIndex) {
+      this.$root.questionModifiers.splice(useIndex, 1);
+      this.$root.battleUsed.splice(useIndex, 1);
     },
     getUsedChar: function(index) {
       for(var i=0; i<this.$root.questionModifiers.length; i++) {
@@ -536,6 +549,10 @@ Vue.component('battle-input-section', {
         }
         var cb = Utils.getCombinations(positions, remain - 1);
         cb = cb.map(c => {c.push(hand[i]); return c;});
+        if (cb.length === 0) {
+          // if no more combination, check current hand
+          cb.push([hand[i]]);
+        }
         for (var cbIdx=0; cbIdx<cb.length; cbIdx++) {
           var choiceArr = cb[cbIdx];
           var pm = Utils.getPermutations(choiceArr);
@@ -545,8 +562,7 @@ Vue.component('battle-input-section', {
             var filledSentence = pm[pmIdx].reduce(function(fill, group) {
               return fill.replace('x', '[' + groups[deck[group]].join('') + ']');
             }, question.split('').join(','));
-            var filledParts = filledSentence.split(',');
-            combo = this.getCombo(sentenceDB, filledParts);
+            combo = this.getCombo(sentenceDB, filledSentence.split(','));
             var comboScore = 0;
             for (var k=0; k<hand.length; k++) {
               var appearPos = pm[pmIdx].indexOf(hand[k]);
@@ -605,12 +621,20 @@ Vue.component('battle-input-section', {
     getCombo: function(filteredDB, filledParts) {
       var result = [];
       var count = 0;
+      var usedIndex = this.$root.questionModifiers.map(qm => qm.index);
 
       for (var matchLength=2; matchLength<=filledParts.length; matchLength++) {
         var index = 0;
         do {
+          var isIncludeValid = false;
+          for (var vi=0; vi<usedIndex.length; vi++) {
+            if (index <= usedIndex[vi] && (index + matchLength) > usedIndex[vi]) {
+              isIncludeValid = true;
+              break;
+            }
+          }
           var pattern = '^' + filledParts.slice(index, index + matchLength).join('') + '$';
-          if (pattern.indexOf('[') !== -1) {
+          if (pattern.indexOf('[') !== -1 || isIncludeValid) {
             var matched = filteredDB.filter(w => w.length === matchLength && w.match(pattern) !== null);
             if (matched.length > 0) {
               result = result.concat(matched);
@@ -702,6 +726,9 @@ Vue.component('battle-input-section', {
             </tbody>
           </table>
           <div>
+            <button class="ui button" @click="resetQuestion">
+              {{ __t('battle.reset-text') }}
+            </button>
             <button class="ui right labeled icon button right floated green" :disabled="!isStep2Completed()" @click="completeStep(2)">
               {{ __t('battle.set-question-text') }}
               <i class="right chevron icon"></i>
@@ -759,7 +786,7 @@ Vue.component('battle-input-section', {
               <div class="usedBigContainer ui segment">
                 <div class="ui top left attached label mini">{{ __t('battle.used-text') }}</div>
                 <div class="usedContainer">
-                  <words-input class="small" v-for="(group, index) in getUsedGroup()" :key="index" :group-key="group" :group="getGroupDisplayByKey(group)"></words-input>
+                  <words-input class="small" v-for="(group, index) in getUsedGroup()" :key="index" :group-key="group" :group="getGroupDisplayByKey(group)" v-on:click.native="unpickUsedIndex(index)"></words-input>
                 </div>
                 <div class="clearfix"></div>
               </div>

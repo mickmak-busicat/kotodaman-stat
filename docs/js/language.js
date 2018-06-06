@@ -131,7 +131,7 @@ var APP_TEXT = {
     'battle.result.more-combo-text': '- 他のセット -',
     'battle.result.score-text': 'おすすめ度',
     'battle.result.high-combo-text': '多いコンボ',
-    'battle.result.medium-combo-text': '一般のコンボ',
+    'battle.result.medium-combo-text': '一般的のコンボ',
     'battle.result.low-combo-text': '少ないコンボ',
     'battle.result.choose-detail-text': '上の字をクリックして詳しい情報を表示できる',
     'battle.result.combo-choice-text': 'コンボセット',
