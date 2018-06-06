@@ -1,0 +1,6 @@
+var categories = {
+
+};
+var categoryDB = {
+
+};

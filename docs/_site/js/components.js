@@ -505,6 +505,9 @@ Vue.component('battle-input-section', {
       return this.$root.updateQuestion(char, index);
     },
     showComboResult: function() {
+      gtag('event', 'Battle', {
+        'event_category': 'ShowComboClicked',
+      });
       const hand = this.$root.battleHand;
       const deck = this.$root.battleDeck;
       const used = this.$root.battleUsed;
