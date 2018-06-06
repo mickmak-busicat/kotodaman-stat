@@ -37,10 +37,8 @@ var APP_TEXT = {
     'monji.3-text': '3-length',
     'monji.2-text': '2-length',
 
-    'header.db-description-text1': 'Words database comes from',
-    'header.db-description-text2': 'here',
-    'header.db-description-text3': ', so some words may not be actually available during the game.',
-    'header.db-description-text4': 'You can help report them via this form.',
+    'header.db-description-text1': 'If you find any missing words in game. Please add it in the form on right hand side. They will be added in next update.',
+    'header.db-description-text2': 'Words that pending to be added.',
 
     'tab.stats-tab': 'Word Stats',
     'tab.battle-tab': 'Battle Simulator',
@@ -108,13 +106,11 @@ var APP_TEXT = {
     'monji.3-text': '三文字',
     'monji.2-text': '二文字',
 
-    'header.db-description-text1': '言葉のデータベースは',
-    'header.db-description-text2': 'これを使用しています',
-    'header.db-description-text3': 'から、ゲーム内に発動しない言葉があるかもしれません。',
-    'header.db-description-text4': '言葉を修正したい方：こちらへ',
+    'header.db-description-text1': 'ゲーム内に発動しない言葉があったら、右のフォームに使って加入します。次のアップデートに加入予定します。',
+    'header.db-description-text2': '加入予定の言葉',
 
     'tab.stats-tab': '言葉統計',
-    'tab.battle-tab': 'バトルシミュレータ',
+    'tab.battle-tab': 'コンボシミュレータ',
 
     'battle.step1-text': 'ステップ 1: 下から字を選んでデッキを編成してください',
     'battle.step2-text': 'ステップ 2: 問題を入力してください',
@@ -126,7 +122,7 @@ var APP_TEXT = {
     'battle.load-deck-text': 'デッキを読み込む...',
     'battle.next-text': '次へ',
     'battle.reset-text': 'リセット',
-    'battle.show-combo-text': '最良いのコンボを見せて',
+    'battle.show-combo-text': '最も良いのコンボを見せて',
     'battle.setup-question-text': '固定の文字を三つ選んでください',
     'battle.set-question-text': '確認',
 
@@ -179,10 +175,8 @@ var APP_TEXT = {
     'monji.3-text': '三字詞',
     'monji.2-text': '二字詞',
 
-    'header.db-description-text1': '單字字庫來自',
-    'header.db-description-text2': '這裡',
-    'header.db-description-text3': '。 所以可能會有部份單字不能在遊戲中使用。',
-    'header.db-description-text4': '你可以在這回報有問題的單字',
+    'header.db-description-text1': '如發現不能使用的單字可在右邊提交，在下一次更新時候會一起更新至字庫。',
+    'header.db-description-text2': '等待更新的單字',
 
     'tab.stats-tab': '單字統計',
     'tab.battle-tab': '戰鬥模擬器',
