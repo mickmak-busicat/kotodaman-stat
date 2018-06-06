@@ -114,7 +114,7 @@ var APP_TEXT = {
     'header.db-description-text4': '言葉を修正したい方：こちらへ',
 
     'tab.stats-tab': '言葉統計',
-    'tab.battle-tab': 'バトルシミュレータ',
+    'tab.battle-tab': 'コンボシミュレータ',
 
     'battle.step1-text': 'ステップ 1: 下から字を選んでデッキを編成してください',
     'battle.step2-text': 'ステップ 2: 問題を入力してください',
@@ -126,7 +126,7 @@ var APP_TEXT = {
     'battle.load-deck-text': 'デッキを読み込む...',
     'battle.next-text': '次へ',
     'battle.reset-text': 'リセット',
-    'battle.show-combo-text': '最良いのコンボを見せて',
+    'battle.show-combo-text': '最も良いのコンボを見せて',
     'battle.setup-question-text': '固定の文字を三つ選んでください',
     'battle.set-question-text': '確認',
 
