@@ -1,6 +1,0 @@
-var categories = {
-
-};
-var categoryDB = {
-
-};
