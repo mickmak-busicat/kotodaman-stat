@@ -342,6 +342,10 @@ Vue.component('load-deck-dropdown', {
     },
     changeDeck: function(deck) {
       this.$root.battleDeck = JSON.parse(deck);
+    },
+    removeDeck: function(index) {
+      this.$root.cachedDecks.splice(index, 1);
+      localStorage.setItem(LS.BATTLE_DECK, JSON.stringify(this.$root.cachedDecks));
     }
   },
   template: `
@@ -349,7 +353,12 @@ Vue.component('load-deck-dropdown', {
       <i class="dropdown icon"></i>
       <div class="default text">{{ __t('battle.load-deck-text') }}</div>
       <div class="menu">
-        <div class="item" v-for="(deck, index) in getCachedDecks()" @click="changeDeck(deck)">{{ __t('battle.deck-text') }} {{ index+1 }}</div>
+        <div class="item" v-for="(deck, index) in getCachedDecks()" @click="changeDeck(deck)">
+          {{ __t('battle.deck-text') }} {{ index+1 }}
+          <a class="red right floated" v-on:click.stop="removeDeck(index)">
+            DELETE
+          </a>
+        </div>
       </div>
     </div>
   `,
