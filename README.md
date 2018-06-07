@@ -4,9 +4,8 @@ https://mickmak-busicat.github.io/kotodaman-stat/
 ### Contribute on dataset
 Dataset is not complete. Feel free to request adding complete words list.
 - Current dataset:
-  - Total: *150715*
+  - Total: *210029*
 - Feel free to add new word using the input in the web.
-- Feel free to report any unavailable words in the web.
 
 ### Functions
 - [x] Choose word and see occurrence of each group by number of characters
@@ -17,4 +16,4 @@ Dataset is not complete. Feel free to request adding complete words list.
 - [x] Full multi-language support
 - [ ] better mobile view support
 - [x] wild card match character support
-- [ ] Support for special type word(event)
+- [ ] Support for special type word(event), filter for special type
