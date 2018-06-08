@@ -67,6 +67,7 @@ var APP_TEXT = {
     'battle.result.choose-detail-text': 'Choose any word from above table to see detail',
     'battle.result.combo-choice-text': 'Combo Choice',
     'battle.result.already-text': 'Already on hand',
+    'battle.result.combo-long-text': 'Max Length',
   },
   jp: {
     'header': '言葉統計',
@@ -136,6 +137,7 @@ var APP_TEXT = {
     'battle.result.choose-detail-text': '上の字をクリックして詳しい情報を表示できる',
     'battle.result.combo-choice-text': 'コンボセット',
     'battle.result.already-text': 'すでに持つ',
+    'battle.result.combo-long-text': '一番長い',
   },
   ch: {
     'header': '單字統計',
@@ -205,5 +207,6 @@ var APP_TEXT = {
     'battle.result.choose-detail-text': '可選擇以上任何單字來查看詳細資料',
     'battle.result.combo-choice-text': '連擊組合',
     'battle.result.already-text': '已在手中的咭',
+    'battle.result.combo-long-text': '最長字數',
   },
 };

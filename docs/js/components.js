@@ -620,6 +620,8 @@ Vue.component('battle-input-section', {
           return b.object.sumScore - a.object.sumScore;
         });
         sortedStats.push(tmpSort);
+
+        this.$root.closeWordPanel();
       }
 
       console.log('finished', checkedCount);
@@ -1014,6 +1016,7 @@ Vue.component('combo-result-display', {
                   <div class="comboInfo">
                     <a class="ui label" :class="comboKeyColor" @click="showComboModal(combo.placement, combo.words)"><i class="eye icon"></i> {{ __t('battle.result.possible-combo') }} <div class="detail">{{ combo.count }}</div></a>
                     <div class="ui label violet">{{ __t('battle.result.already-text') }} <div class="detail">{{ combo.score }}</div></div>
+                    <div class="ui label pink">{{ __t('battle.result.combo-long-text') }} <div class="detail">{{ combo.words.reduce(function(len, w) { return len < w.length ? w.length : len }, 0) }}</div></div>
                   </div>
                   <div class="clearfix"></div>
                 </div>
@@ -1055,6 +1058,7 @@ Vue.component('full-hand-result-display', {
                 </div>
                 <div class="comboInfo">
                   <a class="ui label teal mini" @click="showComboModal(combo.placement, combo.words)"><i class="eye icon"></i> {{ __t('battle.result.possible-combo') }} <div class="detail">{{ combo.count }}</div></a>
+                  <div class="ui label pink mini">{{ __t('battle.result.combo-long-text') }} <div class="detail">{{ combo.words.reduce(function(len, w) { return len < w.length ? w.length : len }, 0) }}</div></div>
                 </div>
                 <div class="clearfix"></div>
               </div>
